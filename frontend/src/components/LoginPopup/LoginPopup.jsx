@@ -55,7 +55,7 @@ const LoginPopup = ({ setShowLogin }) => {
                     <input name='email' onChange={onChangeHandler} value={data.email} type="email" placeholder='Email' />
                     <input name='password' onChange={onChangeHandler} value={data.password} type="password" placeholder='Jelszó' required />
                 </div>
-                <button>{currState === "Bejelentkezés" ? "Bejelentkezés" : "Fiók létrehozása"}</button>
+                <button type="submit" className="login-submit-button">{currState === "Bejelentkezés" ? "Bejelentkezés" : "Fiók létrehozása"}</button>
                 <div className="login-popup-condition">
                     <input type="checkbox" name="" id="" required/>
                     <p>Folytatva egyetértek a használati feltételekkel és az adatvédelmi irányelvekkel.</p>

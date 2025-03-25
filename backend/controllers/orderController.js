@@ -3,12 +3,10 @@ import userModel from "../models/userModel.js"
 import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-//config variables
 const currency = "huf";
 const deliveryCharge = 0;
 const frontend_URL = 'https://gepeszbufe-frontend.onrender.com';
 
-// Placing User Order for Frontend using stripe
 const placeOrder = async (req, res) => {
     try {
         const newOrder = new orderModel({
@@ -16,7 +14,7 @@ const placeOrder = async (req, res) => {
             items: req.body.items,
             amount: req.body.amount,
             address: req.body.address,
-            note: req.body.note,
+            note: req.body.note, // This will contain the special request
             date: new Date(),
         });
 
@@ -60,36 +58,85 @@ const placeOrder = async (req, res) => {
     }
 };
 
-// Placing User Order for Frontend using COD
 const placeOrderCod = async (req, res) => {
     try {
+        // Detailed request logging
+        console.log("=== COD ORDER START ===");
+        console.log("Request headers:", req.headers);
+        console.log("Request body type:", typeof req.body);
+        console.log("COD Request body:", JSON.stringify(req.body, null, 2));
+        
+        // Extract data safely with defaults
+        const userId = req.body.userId || null;
+        const items = req.body.items || [];
+        const amount = req.body.amount || 0;
+        const address = req.body.address || {};
+        const noteText = req.body.note || "";
+        
+        console.log("Note to be saved:", noteText);
+        
+        // Create order with explicit field assignment
         const newOrder = new orderModel({
-            userId: req.body.userId,
-            items: req.body.items,
-            amount: req.body.amount,
-            address: req.body.address,
+            userId,
+            items,
+            amount,
+            address,
+            note: noteText, // Explicitly assign note
             payment: true,
             date: new Date(),
+            status: "Feldolgozás alatt"
         });
 
-        const savedOrder = await newOrder.save();
-        await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
+        console.log("Order object created:", JSON.stringify(newOrder, null, 2));
+        
+        // Save the order with explicit error handling
+        let savedOrder;
+        try {
+            savedOrder = await newOrder.save();
+            console.log("Order saved successfully. ID:", savedOrder._id);
+            console.log("Saved order details:", JSON.stringify(savedOrder, null, 2));
+        } catch (saveError) {
+            console.error("Database save error:", saveError);
+            throw saveError; // Re-throw to be caught by the outer try/catch
+        }
+        
+        // Update user's cart
+        try {
+            await userModel.findByIdAndUpdate(userId, { cartData: {} });
+            console.log("User cart cleared for user:", userId);
+        } catch (cartError) {
+            console.warn("Warning: Failed to clear user cart:", cartError.message);
+            // Continue even if cart clear fails
+        }
 
-        res.json({ success: true, message: "Rendelés elküldve", randomCode: savedOrder.randomCode });
+        console.log("=== COD ORDER COMPLETE ===");
+        
+        // Send success response
+        res.json({ 
+            success: true, 
+            message: "Rendelés elküldve", 
+            randomCode: savedOrder.randomCode,
+            orderId: savedOrder._id
+        });
 
     } catch (error) {
+        console.error('=== COD ORDER ERROR ===');
         console.error('Place COD order error:', error);
-        res.status(500).json({ success: false, message: "Error placing COD order", error: error.message });
+        console.error('Error stack:', error.stack);
+        res.status(500).json({ 
+            success: false, 
+            message: "Error placing COD order", 
+            error: error.message 
+        });
     }
 };
 
-// Listing Order for Admin panel
 const listOrders = async (req, res) => {
     try {
         const orders = await orderModel
             .find({})
             .sort({ date: -1 })
-            .lean(); // Use lean for better performance
+            .lean(); 
 
         res.json({ 
             success: true, 
@@ -105,13 +152,12 @@ const listOrders = async (req, res) => {
     }
 };
 
-// User Orders for Frontend
 const userOrders = async (req, res) => {
     try {
         const orders = await orderModel
             .find({ userId: req.body.userId })
             .sort({ date: -1 })
-            .lean(); // Use lean for better performance
+            .lean(); 
 
         res.json({ 
             success: true, 
@@ -127,7 +173,6 @@ const userOrders = async (req, res) => {
     }
 };
 
-// Update Order Status
 const updateStatus = async (req, res) => {
     try {
         const { orderId, status } = req.body;
@@ -155,7 +200,6 @@ const updateStatus = async (req, res) => {
     }
 };
 
-// Verify Order Payment
 const verifyOrder = async (req, res) => {
     const { orderId, success } = req.body;
     try {

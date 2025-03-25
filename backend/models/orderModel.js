@@ -50,7 +50,6 @@ const orderSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
-// Add a virtual field for formatted date
 orderSchema.virtual('formattedDate').get(function() {
     if (!this.date) return '';
     
@@ -64,12 +63,11 @@ orderSchema.virtual('formattedDate').get(function() {
             hour12: false
         });
     } catch (error) {
-        console.error('Date formatting error:', error);
+        console.error('Dátum formázási hiba:', error);
         return '';
     }
 });
 
-// Ensure unique randomCode
 orderSchema.pre('save', async function(next) {
     if (this.isNew || this.isModified('randomCode')) {
         let isUnique = false;
@@ -87,16 +85,14 @@ orderSchema.pre('save', async function(next) {
         }
 
         if (!isUnique) {
-            return next(new Error('Unable to generate unique random code after multiple attempts'));
+            return next(new Error('Nem tudott egyedi véletlenszerű kódot generálni több kísérlet után'));
         }
     }
     next();
 });
 
-// Add index for randomCode
 orderSchema.index({ randomCode: 1 }, { unique: true });
 
-// Check if the model already exists before creating a new one
 const orderModel = mongoose.models.order || mongoose.model("order", orderSchema);
 
 export default orderModel;

@@ -53,3 +53,9 @@
         padding: 2vw 4vw;
     }
 }
+.header-buy-button {
+    /* Add specific styles for your header button */
+    display: block;
+    z-index: 10;
+    position: relative;
+}

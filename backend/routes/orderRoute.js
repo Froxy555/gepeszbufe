@@ -11,6 +11,10 @@ import {
 
 const orderRouter = express.Router();
 
+// Apply JSON parsing middleware specifically for this router
+orderRouter.use(express.json());
+orderRouter.use(express.urlencoded({ extended: true }));
+
 // List all orders (admin route)
 orderRouter.get("/list", listOrders);
 

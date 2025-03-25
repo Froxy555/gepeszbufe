@@ -29,8 +29,10 @@ const formatDate = (dateString) => {
 
 const Order = () => {
   const [orders, setOrders] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchAllOrders = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`${url}/api/order/list`);
       if (response.data.success) {
@@ -41,6 +43,8 @@ const Order = () => {
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast.error("Hiba történt a rendelések betöltésekor");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -52,7 +56,6 @@ const Order = () => {
       });
 
       if (response.data.success) {
-        // Azonnal frissítjük a listát a változtatás után
         await fetchAllOrders();
         toast.success("Státusz sikeresen frissítve");
       }
@@ -69,37 +72,53 @@ const Order = () => {
   return (
     <div className='order add'>
       <h3>Rendelések</h3>
-      <div className="order-list">
-        {orders.map((order) => (
-          <div key={order._id} className='order-item'>
-            <img src={assets.parcel_icon} alt="Parcel" />
-            <div>
-              <p className='order-item-food'>
-                {order.items.map((item, index) => (
-                  index === order.items.length - 1
-                    ? `${item.name} x ${item.quantity}`
-                    : `${item.name} x ${item.quantity}, `
-                ))}
-              </p>
-              <p><strong>Név:</strong> {order.address.firstName + " " + order.address.lastName}</p>
-              <p><strong>Rendelés dátuma:</strong> <span className="order-item-timestamp">{formatDate(order.date)}</span></p>
-              <p><strong>Szünet:</strong> {order.address.breakTime || "N/A"}</p>
-              <p><strong>Telefonszám:</strong> {order.address.phone}</p>
-              <p><strong>Rendelés kódja:</strong> <span className="order-item-code">{order.randomCode}</span></p>
-            </div>
-            <p>Termékek : {order.items.length}</p>
-            <p>{order.amount}{currency}</p>
-            <select
-              onChange={(e) => statusHandler(e, order._id)}
-              value={order.status}
-            >
-              <option value="Felvettük rendelésed">Felvettük rendelésed</option>
-              <option value="Készítés alatt">Készítés alatt</option>
-              <option value="Elkészült">Elkészült</option>
-            </select>
-          </div>
-        ))}
-      </div>
+      {loading ? (
+        <div className="loading">Rendelések betöltése...</div>
+      ) : (
+        <div className="order-list">
+          {orders.length === 0 ? (
+            <div className="no-orders">Nincs aktív rendelés</div>
+          ) : (
+            orders.map((order) => (
+              <div key={order._id} className='order-item'>
+                <img src={assets.parcel_icon} alt="Parcel" />
+                <div>
+                  <p className='order-item-food'>
+                    {order.items.map((item, index) => (
+                      index === order.items.length - 1
+                        ? `${item.name} x ${item.quantity}`
+                        : `${item.name} x ${item.quantity}, `
+                    ))}
+                  </p>
+                  <p><strong>Név:</strong> {order.address.firstName + " " + order.address.lastName}</p>
+                  <p><strong>Rendelés dátuma:</strong> <span className="order-item-timestamp">{formatDate(order.date)}</span></p>
+                  <p><strong>Szünet:</strong> {order.address.breakTime || "N/A"}</p>
+                  <p><strong>Telefonszám:</strong> {order.address.phone}</p>
+                  <p><strong>Rendelés kódja:</strong> <span className="order-item-code">{order.randomCode}</span></p>
+                  
+                  {/* Display the note/special request with improved visibility */}
+                  {order.note && order.note !== "" && (
+  <p className="special-request">
+    <strong>Megjegyzés:</strong> 
+    <span className="order-item-note">{order.note}</span>
+  </p>
+)}
+                </div>
+                <p>Termékek : {order.items.length}</p>
+                <p>{order.amount}{currency}</p>
+                <select
+                  onChange={(e) => statusHandler(e, order._id)}
+                  value={order.status}
+                >
+                  <option value="Felvettük rendelésed">Felvettük rendelésed</option>
+                  <option value="Készítés alatt">Készítés alatt</option>
+                  <option value="Elkészült">Elkészült</option>
+                </select>
+              </div>
+            ))
+          )}
+        </div>
+      )}
     </div>
   );
 };

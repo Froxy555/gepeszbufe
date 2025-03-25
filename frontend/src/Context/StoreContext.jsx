@@ -9,6 +9,7 @@ const StoreContextProvider = (props) => {
     const [food_list, setFoodList] = useState([]);
     const [cartItems, setCartItems] = useState({});
     const [token, setToken] = useState("")
+    const [specialRequest, setSpecialRequest] = useState(""); // Added state for special request
     const currency = " Ft";
     const deliveryCharge = 0;
 
@@ -81,7 +82,9 @@ const StoreContextProvider = (props) => {
         loadCartData,
         setCartItems,
         currency,
-        deliveryCharge
+        deliveryCharge,
+        specialRequest,     // Added to context value
+        setSpecialRequest   // Added to context value
     };
 
     return (

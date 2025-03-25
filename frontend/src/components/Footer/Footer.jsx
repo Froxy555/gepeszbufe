@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="footer-content">
         <div className="footer-content-left">
         
-            <p>a.</p>
+            <p>GépészBüfé - Lakj jól, ne várakozz!</p>
             <div className="footer-social-icons">
                 <img src={assets.facebook_icon} alt="" />
                 <img src={assets.twitter_icon} alt="" />
@@ -18,10 +18,10 @@ const Footer = () => {
         <div className="footer-content-center">
             <h2>GépészBüfé</h2>
             <ul>
-                <li>főoldal</li>
-                <li>About us</li>
-                <li>Delivery</li>
-                <li>Privacy policy</li>
+                <li>Főoldal</li>
+                <li>Menü</li>
+                <li>Rendelések</li>
+                <li>Kapcsolat</li>
             </ul>
         </div>
         <div className="footer-content-right">

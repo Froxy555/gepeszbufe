@@ -1,12 +1,38 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './Cart.css'
 import { StoreContext } from '../../Context/StoreContext'
 import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
 
-  const {cartItems, food_list, removeFromCart,getTotalCartAmount,url,currency,deliveryCharge} = useContext(StoreContext);
+  const {cartItems, food_list, removeFromCart, getTotalCartAmount, url, currency, deliveryCharge, setSpecialRequest} = useContext(StoreContext);
   const navigate = useNavigate();
+  const [specialRequestText, setSpecialRequestText] = useState('');
+
+  // Load special request from localStorage on component mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    
+    // Load special request from localStorage if it exists
+    const savedRequest = localStorage.getItem("specialRequest");
+    if (savedRequest) {
+      setSpecialRequestText(savedRequest);
+      setSpecialRequest(savedRequest);
+      console.log("Loaded special request from localStorage:", savedRequest);
+    }
+  }, [setSpecialRequest]);
+
+  // Handle special request input changes
+  const handleSpecialRequestChange = (e) => {
+    const value = e.target.value;
+    console.log("Setting special request in Cart:", value);
+    setSpecialRequestText(value);
+    setSpecialRequest(value);
+    
+    // Store in localStorage for persistence
+    localStorage.setItem("specialRequest", value);
+    console.log("Saved to localStorage:", value);
+  };
 
   return (
     <div className='cart'>
@@ -30,14 +56,13 @@ const Cart = () => {
               <hr />
             </div>)
           }
+          return null;
         })}
       </div>
       <div className="cart-bottom">
         <div className="cart-total">
           <h2>Kosár tartalma</h2>
           <div>
-            
-            
             <hr />
             <div className="cart-total-details"><b>Végösszeg</b><b>{getTotalCartAmount()===0?0:getTotalCartAmount()+deliveryCharge}{currency}</b></div>
             <hr />
@@ -48,8 +73,14 @@ const Cart = () => {
           <div>
             <p>Ha van bármi kérésed, ide írd!</p>
             <div className='cart-promocode-input'>
-              <input type="text" placeholder='nem kérek hagymát'/>
-              <button>Elküldés</button>
+              <input 
+                type="text" 
+                placeholder='nem kérek hagymát' 
+                value={specialRequestText}
+                onChange={handleSpecialRequestChange}
+              />
+              {/* Add a small indicator to show the special request is saved */}
+              {specialRequestText && <div style={{fontSize: "12px", color: "green", marginTop: "5px"}}>Kérés elmentve!</div>}
             </div>
           </div>
         </div>

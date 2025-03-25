@@ -19,7 +19,7 @@ const Add = () => {
         event.preventDefault();
 
         if (!image) {
-            toast.error('Image not selected');
+            toast.error('Nincs kép kiválasztva');
             return null;
         }
 

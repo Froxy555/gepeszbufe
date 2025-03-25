@@ -76,3 +76,33 @@
         padding: 1px 3px;
     }
 }
+
+.special-request {
+    margin-top: 8px;
+  }
+  
+  .order-item-note {
+    background-color: #fff3cd;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border-left: 3px solid #ffc107;
+    margin-left: 8px;
+    display: inline-block;
+    font-weight: 500;
+  }
+  
+  .loading {
+    text-align: center;
+    padding: 20px;
+    font-size: 18px;
+    color: #666;
+  }
+  
+  .no-orders {
+    text-align: center;
+    padding: 30px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    font-size: 18px;
+    color: #666;
+  }

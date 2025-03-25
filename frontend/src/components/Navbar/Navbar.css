@@ -1,17 +1,9 @@
 .navbar {
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    background-color: #ffffff; /* vagy bármilyen háttérszín, ami illeszkedik a dizájnhoz */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* opcionális árnyék a jobb elkülönítéshez */
     padding: 20px 0px;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
-/* A többi CSS szabály változatlan marad */
-
 
 .navbar .logo {
     width: 150px;
@@ -154,4 +146,35 @@ position: relative;
     .navbar-menu {
         display: none;
     }
+}
+
+.fixed-cart-icon {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.fixed-cart-icon img {
+    width: 30px;
+    height: 30px;
+}
+
+.fixed-cart-icon .dot {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 10px;
+    height: 10px;
+    background-color: #ff5c5c;
+    border-radius: 50%;
 }

@@ -1,10 +1,7 @@
-import React, { useContext } from 'react'
+import React from 'react'
 import './Header.css'
-import { StoreContext } from '../../Context/StoreContext'
 
 const Header = () => {
-    const { showLogin } = useContext(StoreContext)
-
     const scrollToMenu = () => {
         const menuSection = document.getElementById('explore-menu');
         if (menuSection) {
@@ -16,14 +13,13 @@ const Header = () => {
         <div className='header'>
             <div className='header-contents'>
                 <h2>Rendeld meg kedvenc ételeid sorbanállás nélkül</h2>
-                {!showLogin && (
-                    <button 
-                        onClick={scrollToMenu}
-                        style={{ position: 'relative', zIndex: 1, cursor: 'pointer' }}
-                    >
-                        Vásárlás
-                    </button>
-                )}
+                <button 
+                    onClick={scrollToMenu}
+                    style={{ position: 'relative', zIndex: 1, cursor: 'pointer' }}
+                    className="header-buy-button" // Add a unique class for easier styling/selection
+                >
+                    Vásárlás
+                </button>
             </div>
         </div>
     )

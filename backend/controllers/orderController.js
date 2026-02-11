@@ -5,7 +5,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const currency = "huf";
 const deliveryCharge = 0;
-const frontend_URL = 'http://localhost:5173';
+const frontend_URL =
+  process.env.NODE_ENV === "production"
+    ? "https://gepeszbufe-frontend.onrender.com"
+    : "http://localhost:5173";
 
 const placeOrder = async (req, res) => {
     try {

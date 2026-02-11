@@ -17,10 +17,13 @@ app.use(express.json({ limit: '5mb' }))
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://gepeszbufe-frontend.onrender.com"
+    "http://localhost:5174",
+    "https://gepeszbufe-frontend.onrender.com",
+    "https://gepeszbufe-admin.onrender.com"
   ],
   credentials: true
 }));
+
 
 app.options('*', cors());
 

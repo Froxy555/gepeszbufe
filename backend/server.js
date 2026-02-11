@@ -15,10 +15,13 @@ const port = process.env.PORT || 4000;
 // middlewares
 app.use(express.json({ limit: '5mb' }))
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
-    methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'token'],
+  origin: [
+    "http://localhost:5173",
+    "https://gepeszbufe-frontend.onrender.com"
+  ],
+  credentials: true
 }));
+
 app.options('*', cors());
 
 // db connection

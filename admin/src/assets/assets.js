@@ -7,8 +7,7 @@ import parcel_icon from './parcel_icon.png'
 import profile_icon from './profile_icon.png'
 import user_icon from './user_icon.svg'
 
-
-export const url = import.meta.env.VITE_API_URL || 'https://gepeszbufe-backend.onrender.com'
+export const url = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : 'https://gepeszbufe-backend.onrender.com'
 export const currency = 'Ft'
 
 export const assets = {

@@ -7,7 +7,7 @@ import parcel_icon from './parcel_icon.png'
 import profile_icon from './profile_icon.png'
 import user_icon from './user_icon.svg'
 
-export const url = 'http://localhost:4000'
+export const url = 'https://gepeszbufe-backend.onrender.com'
 export const currency = 'Ft'
 
 export const assets = {

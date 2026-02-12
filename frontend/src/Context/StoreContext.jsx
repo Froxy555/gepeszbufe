@@ -5,7 +5,8 @@ export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
 
-    const url = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : "https://gepeszbufe-backend.onrender.com";
+    const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+    const url = isLocal ? "http://localhost:4000" : "https://gepeszbufe-backend.onrender.com";
     const [food_list, setFoodList] = useState([]);
     const [cartItems, setCartItems] = useState({});
     const [token, setToken] = useState("")

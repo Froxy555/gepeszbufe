@@ -7,12 +7,12 @@ import List from './pages/List/List'
 import Orders from './pages/Orders/Orders'
 import Users from './pages/Users/Users'
 import Edit from './pages/Edit/Edit'
+import { assets, url } from './assets/assets'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
-
-  const url = "http://localhost:4000";
+  // Removed local const url to use the one from assets/assets.js
 
   return (
     <div className='app'>

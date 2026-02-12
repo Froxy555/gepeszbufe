@@ -5,8 +5,7 @@ export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
 
-    const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-    const url = isLocal ? "http://localhost:4000" : "https://gepeszbufe-backend.onrender.com";
+    const url = import.meta.env.PROD ? "https://gepeszbufe-backend.onrender.com" : "http://localhost:4000";
     const [food_list, setFoodList] = useState([]);
     const [cartItems, setCartItems] = useState({});
     const [token, setToken] = useState("")

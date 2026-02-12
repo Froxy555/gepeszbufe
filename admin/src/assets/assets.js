@@ -7,8 +7,7 @@ import parcel_icon from './parcel_icon.png'
 import profile_icon from './profile_icon.png'
 import user_icon from './user_icon.svg'
 
-const isLocal = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-export const url = isLocal ? "http://localhost:4000" : "https://gepeszbufe-backend.onrender.com";
+export const url = import.meta.env.PROD ? 'https://gepeszbufe-backend.onrender.com' : 'http://localhost:4000'
 export const currency = 'Ft'
 
 export const assets = {

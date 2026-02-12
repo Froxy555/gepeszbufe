@@ -29,30 +29,41 @@
   gap: 12px;
 }
 
-.my-orders-main img{
+.my-orders-main img {
   width: 46px;
   height: 46px;
 }
 
-.my-orders-thumb-stack{
+.my-orders-thumb-stack {
   position: relative;
   width: 60px;
   height: 46px;
 }
 
-.my-orders-thumb-stack img{
+.my-orders-thumb-stack img {
   position: absolute;
   width: 36px;
   height: 36px;
   border-radius: 12px;
   object-fit: cover;
   border: 2px solid #fff;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-.my-orders-thumb-stack img:nth-child(1){ left: 0; top: 5px; }
-.my-orders-thumb-stack img:nth-child(2){ left: 16px; top: 0; }
-.my-orders-thumb-stack img:nth-child(3){ left: 32px; top: 10px; }
+.my-orders-thumb-stack img:nth-child(1) {
+  left: 0;
+  top: 5px;
+}
+
+.my-orders-thumb-stack img:nth-child(2) {
+  left: 16px;
+  top: 0;
+}
+
+.my-orders-thumb-stack img:nth-child(3) {
+  left: 32px;
+  top: 10px;
+}
 
 .my-orders-info {
   display: flex;
@@ -105,6 +116,27 @@
   height: 8px;
   border-radius: 50%;
   background: currentColor;
+}
+
+
+.my-orders-status-felvettük-rendelésed {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.my-orders-status-készítés-alatt {
+  background: #fff4d6;
+  color: #e89b1b;
+}
+
+.my-orders-status-elkészült {
+  background: #e6f7ea;
+  color: #22c55e;
+}
+
+.my-orders-status-átvéve {
+  background: #f3f4f6;
+  color: #4b5563;
 }
 
 .my-orders-status-processing,

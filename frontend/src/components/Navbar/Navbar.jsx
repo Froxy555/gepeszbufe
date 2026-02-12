@@ -140,30 +140,30 @@ const Navbar = ({ setShowLogin }) => {
         </Link>
 
         <ul className={`navbar-menu ${isMobileMenuOpen ? 'navbar-menu-mobile-open' : ''}`}>
-          <Link 
-            to="/" 
-            onClick={() => { setMenu("home"); setIsMobileMenuOpen(false); }} 
+          <Link
+            to="/"
+            onClick={() => { setMenu("home"); setIsMobileMenuOpen(false); }}
             className={`${menu === "home" ? "active" : ""}`}
           >
             főoldal
           </Link>
-          <a 
-            href='#explore-menu' 
-            onClick={handleMenuSectionClick} 
+          <a
+            href='#explore-menu'
+            onClick={handleMenuSectionClick}
             className={`${menu === "menu" ? "active" : ""}`}
           >
             menü
           </a>
-          <Link 
-            to='/myorders' 
-            onClick={() => { setMenu("mob-app"); setIsMobileMenuOpen(false); }} 
+          <Link
+            to='/myorders'
+            onClick={() => { setMenu("mob-app"); setIsMobileMenuOpen(false); }}
             className={`${menu === "mob-app" ? "active" : ""}`}
           >
             rendelések
           </Link>
-          <a 
-            href='#footer' 
-            onClick={handleContactClick} 
+          <a
+            href='#footer'
+            onClick={handleContactClick}
             className={`${menu === "contact" ? "active" : ""}`}
           >
             kapcsolat
@@ -171,8 +171,8 @@ const Navbar = ({ setShowLogin }) => {
         </ul>
 
         <div className="navbar-right">
-          <div 
-            className={`navbar-hamburger ${isMobileMenuOpen ? 'active' : ''}`} 
+          <div
+            className={`navbar-hamburger ${isMobileMenuOpen ? 'active' : ''}`}
             onClick={toggleMobileMenu}
           >
             <span></span>
@@ -180,9 +180,9 @@ const Navbar = ({ setShowLogin }) => {
             <span></span>
           </div>
 
-          <button 
-            className='navbar-icon-button' 
-            onClick={handleSearchClick} 
+          <button
+            className='navbar-icon-button'
+            onClick={handleSearchClick}
             type="button"
             aria-label="Keresés"
           >
@@ -197,8 +197,8 @@ const Navbar = ({ setShowLogin }) => {
           {!token ? (
             <button onClick={() => setShowLogin(true)}>Bejelentkezés</button>
           ) : (
-            <div 
-              className={`navbar-profile ${showProfileMenu ? 'open' : ''}`} 
+            <div
+              className={`navbar-profile ${showProfileMenu ? 'open' : ''}`}
               onClick={handleProfileClick}
             >
               <img src={profileAvatar || assets.profile_icon} alt="Profil" />
@@ -216,20 +216,14 @@ const Navbar = ({ setShowLogin }) => {
                 <li onClick={logout}>
                   <img src={assets.logout_icon} alt="" />
                   <p>Kijelentkezés</p>
-                </li> 
+                </li>
               </ul>
             </div>
           )}
         </div>
       </div>
 
-      {/* Fixed cart icon in the bottom right corner - only shows on home page */}
-      {isHomePage && (
-        <div className="fixed-cart-icon" onClick={handleCartClick}>
-          <img src={assets.basket_icon} alt="Kosár" />
-          {getTotalCartAmount() > 0 && <div className="dot"></div>}
-        </div>
-      )}
+
     </>
   )
 }

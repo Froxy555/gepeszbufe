@@ -8,16 +8,17 @@
     font-size: 14px;
     color: #505050;
     background: #ffffff;
-    border: 1px solid #ebebeb;
+    border: 1px solid tomato;
     border-radius: 12px;
 }
 
-.order-item-food,
-.order-item-name {
+.order-item-food {
     font-weight: 600;
 }
 
 .order-item-name {
+    font-weight: 600;
+    color: #333;
     margin-top: 30px;
     margin-bottom: 5px;
 }
@@ -119,11 +120,90 @@
     color: #666;
 }
 
-.no-orders {
-    text-align: center;
-    padding: 30px;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    font-size: 18px;
-    color: #666;
+.order-status-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 150px;
+    width: 100%;
+}
+
+.status-step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 1px solid #e2e2e2;
+    border-radius: 4px;
+    cursor: default;
+    transition: all 0.3s;
+    background-color: #f9f9f9;
+    font-size: 13px;
+}
+
+.status-step.completed {
+    background-color: #e6fffa;
+    border-color: #38b2ac;
+    color: #2c7a7b;
+}
+
+.status-step.next {
+    cursor: pointer;
+    background-color: #fff;
+    border-color: #ed8936;
+    color: #dd6b20;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.status-step.next:hover {
+    background-color: #fffaf0;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.status-step.disabled {
+    opacity: 0.5;
+    background-color: #f0f0f0;
+    color: #a0a0a0;
+}
+
+.status-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.status-step.completed .status-icon {
+    background-color: #38b2ac;
+    color: white;
+    border-color: #38b2ac;
+}
+
+.status-text {
+    font-weight: 500;
+}
+
+@media (max-width: 900px) {
+    .order-item {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .order-status-steps {
+        width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .status-step {
+        flex: 1;
+        min-width: 140px;
+    }
 }

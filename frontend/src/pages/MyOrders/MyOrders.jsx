@@ -6,21 +6,47 @@ import { assets } from '../../assets/assets';
 import { useNavigate } from 'react-router-dom';
 
 const MyOrders = () => {
-  
-  const [data,setData] =  useState([]);
-  const {url,token,currency} = useContext(StoreContext);
+
+  const [data, setData] = useState([]);
+  const { url, token, currency } = useContext(StoreContext);
   const navigate = useNavigate();
 
   const fetchOrders = async () => {
-    const response = await axios.post(url+"/api/order/userorders",{},{headers:{token}});
-    setData(response.data.data)
+    if (token) {
+      const response = await axios.post(url + "/api/order/userorders", {}, { headers: { token } });
+      setData(response.data.data)
+    } else {
+      // Guest mode: fetch orders stored in localStorage
+      const guestOrders = JSON.parse(localStorage.getItem('guestOrders') || '[]');
+      if (guestOrders.length > 0) {
+        // We need to fetch each order individually or create a new endpoint. 
+        // For now, let's try fetching them one by one. 
+        // NOTE: The backend endpoint /api/order/userorders requires token.
+        // We might need to use /api/order/:id but that might also require ownership check or token.
+        // Let's check backend routes. /api/order/:id uses authMiddleware but might allow if we modify it or use a specific guest route.
+        // Actually, I modified authMiddleware to be optional.
+
+        const loadedOrders = [];
+        for (const orderId of guestOrders) {
+          try {
+            const response = await axios.get(`${url}/api/order/${orderId}`);
+            if (response.data.success) {
+              loadedOrders.push(response.data.data);
+            }
+          } catch (err) {
+            console.error("Error fetching guest order:", err);
+          }
+        }
+        // Sort by date descending (assuming date string works for sort)
+        loadedOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
+        setData(loadedOrders);
+      }
+    }
   }
 
-  useEffect(()=>{
-    if (token) {
-      fetchOrders();
-    }
-  },[token])
+  useEffect(() => {
+    fetchOrders();
+  }, [token])
 
   return (
     <div className='my-orders section animate-fade-up'>
@@ -32,20 +58,14 @@ const MyOrders = () => {
             <button type="button" onClick={fetchOrders}>Frissítés</button>
           </div>
         ) : (
-          data.map((order,index)=>{
+          data.map((order, index) => {
             const itemSummary = order.items.map((item, idx) => (
               idx === order.items.length - 1
                 ? `${item.name} x ${item.quantity}`
                 : `${item.name} x ${item.quantity}, `
             ));
 
-            const statusLabel = order.status === 'Delivered'
-              ? 'Kiszállítva'
-              : order.status === 'Out for delivery'
-              ? 'Kiszállítás alatt'
-              : order.status === 'Processing'
-              ? 'Feldolgozás alatt'
-              : order.status;
+            const statusLabel = order.status;
 
             const previewItems = order.items.slice(0, 3);
 

@@ -3,7 +3,7 @@ import './FoodDisplay.css'
 import FoodItem from '../FoodItem/FoodItem'
 import { StoreContext } from '../../Context/StoreContext'
 
-const FoodDisplay = ({category}) => {
+const FoodDisplay = ({ category }) => {
 
   const { food_list, searchTerm, setSearchTerm } = useContext(StoreContext);
 
@@ -36,6 +36,8 @@ const FoodDisplay = ({category}) => {
             price={item.price}
             id={item._id}
             category={item.category}
+            available={item.available}
+            rating={item.rating}
           />
         ))}
       </div>

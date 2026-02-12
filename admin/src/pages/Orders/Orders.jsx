@@ -3,6 +3,7 @@ import './Orders.css';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import { assets, url, currency } from '../../assets/assets';
+import notificationSound from '../../assets/notification.mp3';
 
 const formatDate = (dateString) => {
   if (!dateString) return 'Dátum nem elérhető';
@@ -30,21 +31,36 @@ const formatDate = (dateString) => {
 const Order = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const previousOrdersLength = React.useRef(0);
 
-  const fetchAllOrders = async () => {
-    setLoading(true);
+  const playNotificationSound = () => {
+    const audio = new Audio(notificationSound);
+    audio.play().catch(error => console.log("Audio play failed:", error));
+  }
+
+  const fetchAllOrders = async (isAutoRefresh = false) => {
+    if (!isAutoRefresh) setLoading(true);
     try {
       const response = await axios.get(`${url}/api/order/list`);
       if (response.data.success) {
-        setOrders(response.data.data);
+        const newOrders = response.data.data;
+
+        // Check for new orders
+        if (isAutoRefresh && newOrders.length > previousOrdersLength.current) {
+          playNotificationSound();
+          toast.info("Új rendelés érkezett!");
+        }
+
+        setOrders(newOrders);
+        previousOrdersLength.current = newOrders.length;
       } else {
-        toast.error("Hiba történt a rendelések betöltésekor");
+        if (!isAutoRefresh) toast.error("Hiba történt a rendelések betöltésekor");
       }
     } catch (error) {
       console.error('Error fetching orders:', error);
-      toast.error("Hiba történt a rendelések betöltésekor");
+      if (!isAutoRefresh) toast.error("Hiba történt a rendelések betöltésekor");
     } finally {
-      setLoading(false);
+      if (!isAutoRefresh) setLoading(false);
     }
   };
 
@@ -56,7 +72,7 @@ const Order = () => {
       });
 
       if (response.data.success) {
-        await fetchAllOrders();
+        await fetchAllOrders(); // Re-fetch, but not auto-refresh, so no sound
         toast.success("Státusz sikeresen frissítve");
       }
     } catch (error) {
@@ -66,7 +82,14 @@ const Order = () => {
   };
 
   useEffect(() => {
-    fetchAllOrders();
+    fetchAllOrders(); // Initial fetch
+
+    // Auto refresh every 10 seconds
+    const intervalId = setInterval(() => {
+      fetchAllOrders(true);
+    }, 10000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -95,25 +118,37 @@ const Order = () => {
                   <p><strong>Szünet:</strong> {order.address.breakTime || "N/A"}</p>
                   <p><strong>Telefonszám:</strong> {order.address.phone}</p>
                   <p><strong>Rendelés kódja:</strong> <span className="order-item-code">{order.randomCode}</span></p>
-                  
+
                   {/* Display the note/special request with improved visibility */}
                   {order.note && order.note !== "" && (
-  <p className="special-request">
-    <strong>Megjegyzés:</strong> 
-    <span className="order-item-note">{order.note}</span>
-  </p>
-)}
+                    <p className="special-request">
+                      <strong>Megjegyzés:</strong>
+                      <span className="order-item-note">{order.note}</span>
+                    </p>
+                  )}
                 </div>
                 <p>Termékek : {order.items.length}</p>
                 <p>{order.amount}{currency}</p>
-                <select
-                  onChange={(e) => statusHandler(e, order._id)}
-                  value={order.status}
-                >
-                  <option value="Felvettük rendelésed">Felvettük rendelésed</option>
-                  <option value="Készítés alatt">Készítés alatt</option>
-                  <option value="Elkészült">Elkészült</option>
-                </select>
+                <div className='order-status-steps'>
+                  {["Felvettük rendelésed", "Készítés alatt", "Elkészült", "Átvéve"].map((status, index) => {
+                    const currentStatusIndex = ["Felvettük rendelésed", "Készítés alatt", "Elkészült", "Átvéve"].indexOf(order.status);
+                    const isCompleted = index <= currentStatusIndex;
+                    const isNext = index === currentStatusIndex + 1;
+
+                    return (
+                      <div
+                        key={index}
+                        className={`status-step ${isCompleted ? 'completed' : ''} ${isNext ? 'next' : 'disabled'}`}
+                        onClick={(e) => isNext ? statusHandler({ target: { value: status } }, order._id) : null}
+                      >
+                        <div className={`status-icon`}>
+                          {isCompleted ? '✓' : ''}
+                        </div>
+                        <span className="status-text">{status}</span>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             ))
           )}

@@ -1,14 +1,19 @@
 import React from 'react'
 import Navbar from './components/Navbar/Navbar'
 import Sidebar from './components/Sidebar/Sidebar'
-import { Route, Routes } from 'react-router-dom'
+import { Route, Routes, Navigate } from 'react-router-dom'
 import Add from './pages/Add/Add'
 import List from './pages/List/List'
 import Orders from './pages/Orders/Orders'
+import Users from './pages/Users/Users'
+import Edit from './pages/Edit/Edit'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
+
+  const url = "http://localhost:4000";
+
   return (
     <div className='app'>
       <ToastContainer />
@@ -17,9 +22,12 @@ const App = () => {
       <div className="app-content">
         <Sidebar />
         <Routes>
-          <Route path="/add" element={<Add />} />
-          <Route path="/list" element={<List />} />
-          <Route path="/orders" element={<Orders />} />
+          <Route path="/" element={<Navigate to="/orders" />} />
+          <Route path="/add" element={<Add url={url} />} />
+          <Route path="/list" element={<List url={url} />} />
+          <Route path="/orders" element={<Orders url={url} />} />
+          <Route path="/users" element={<Users url={url} />} />
+          <Route path="/edit" element={<Edit url={url} />} />
         </Routes>
       </div>
     </div>

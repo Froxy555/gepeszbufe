@@ -5,7 +5,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const currency = "huf";
 const deliveryCharge = 0;
-const frontend_URL = 'http://localhost:5173';
+const frontend_URL =
+    process.env.NODE_ENV === "production"
+        ? "https://gepeszbufe-frontend.onrender.com"
+        : "http://localhost:5173";
 
 const placeOrder = async (req, res) => {
     try {
@@ -19,7 +22,24 @@ const placeOrder = async (req, res) => {
         });
 
         const savedOrder = await newOrder.save();
-        await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
+
+        // Only clear cart if it's a real user (not guest)
+        if (req.body.userId && !req.body.userId.toString().startsWith("guest_")) {
+            await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
+
+            // Update user profile with phone and name if provided
+            const updates = {};
+            if (req.body.address.phone) updates.phone = req.body.address.phone;
+            if (req.body.address.firstName && req.body.address.lastName) {
+                updates.name = `${req.body.address.lastName} ${req.body.address.firstName}`;
+            } else if (req.body.address.firstName) {
+                updates.name = req.body.address.firstName; // Fallback
+            }
+
+            if (Object.keys(updates).length > 0) {
+                await userModel.findByIdAndUpdate(req.body.userId, updates);
+            }
+        }
 
         const line_items = req.body.items.map((item) => ({
             price_data: {
@@ -27,7 +47,7 @@ const placeOrder = async (req, res) => {
                 product_data: {
                     name: item.name
                 },
-                unit_amount: item.price * 100 
+                unit_amount: item.price * 100
             },
             quantity: item.quantity
         }));
@@ -60,21 +80,15 @@ const placeOrder = async (req, res) => {
 
 const placeOrderCod = async (req, res) => {
     try {
-        // Detailed request logging
-        console.log("=== COD ORDER START ===");
-        console.log("Request headers:", req.headers);
-        console.log("Request body type:", typeof req.body);
-        console.log("COD Request body:", JSON.stringify(req.body, null, 2));
-        
+        // Detailed request logging removed
+
         // Extract data safely with defaults
         const userId = req.body.userId || null;
         const items = req.body.items || [];
         const amount = req.body.amount || 0;
         const address = req.body.address || {};
         const noteText = req.body.note || "";
-        
-        console.log("Note to be saved:", noteText);
-        
+
         // Create order with explicit field assignment
         const newOrder = new orderModel({
             userId,
@@ -87,46 +101,53 @@ const placeOrderCod = async (req, res) => {
             status: "Feldolgozás alatt"
         });
 
-        console.log("Order object created:", JSON.stringify(newOrder, null, 2));
-        
         // Save the order with explicit error handling
         let savedOrder;
         try {
             savedOrder = await newOrder.save();
-            console.log("Order saved successfully. ID:", savedOrder._id);
-            console.log("Saved order details:", JSON.stringify(savedOrder, null, 2));
         } catch (saveError) {
             console.error("Database save error:", saveError);
             throw saveError; // Re-throw to be caught by the outer try/catch
         }
-        
+
         // Update user's cart
         try {
-            await userModel.findByIdAndUpdate(userId, { cartData: {} });
-            console.log("User cart cleared for user:", userId);
+            if (userId && !userId.toString().startsWith("guest_")) {
+                await userModel.findByIdAndUpdate(userId, { cartData: {} });
+
+                // Update user profile with phone and name if provided
+                const updates = {};
+                if (address.phone) updates.phone = address.phone;
+                if (address.firstName && address.lastName) {
+                    updates.name = `${address.lastName} ${address.firstName}`;
+                } else if (address.firstName) {
+                    updates.name = address.firstName; // Fallback
+                }
+
+                if (Object.keys(updates).length > 0) {
+                    await userModel.findByIdAndUpdate(userId, updates);
+                }
+            }
         } catch (cartError) {
             console.warn("Warning: Failed to clear user cart:", cartError.message);
             // Continue even if cart clear fails
         }
 
-        console.log("=== COD ORDER COMPLETE ===");
-        
         // Send success response
-        res.json({ 
-            success: true, 
-            message: "Rendelés elküldve", 
+        res.json({
+            success: true,
+            message: "Rendelés elküldve",
             randomCode: savedOrder.randomCode,
             orderId: savedOrder._id
         });
 
     } catch (error) {
-        console.error('=== COD ORDER ERROR ===');
         console.error('Place COD order error:', error);
         console.error('Error stack:', error.stack);
-        res.status(500).json({ 
-            success: false, 
-            message: "Error placing COD order", 
-            error: error.message 
+        res.status(500).json({
+            success: false,
+            message: "Error placing COD order",
+            error: error.message
         });
     }
 };
@@ -136,10 +157,10 @@ const listOrders = async (req, res) => {
         const orders = await orderModel
             .find({})
             .sort({ date: -1 })
-            .lean(); 
+            .lean();
 
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             data: orders.map(order => ({
                 ...order,
                 formattedDate: new Date(order.date).toLocaleString('hu-HU'),
@@ -157,10 +178,10 @@ const userOrders = async (req, res) => {
         const orders = await orderModel
             .find({ userId: req.body.userId })
             .sort({ date: -1 })
-            .lean(); 
+            .lean();
 
-        res.json({ 
-            success: true, 
+        res.json({
+            success: true,
             data: orders.map(order => ({
                 ...order,
                 formattedDate: new Date(order.date).toLocaleString('hu-HU'),
@@ -177,11 +198,11 @@ const updateStatus = async (req, res) => {
     try {
         const { orderId, status } = req.body;
         console.log('Updating order:', { orderId, status });
-        
+
         const updatedOrder = await orderModel.findByIdAndUpdate(
             orderId,
             { status },
-            { 
+            {
                 new: true,
                 runValidators: true
             }
@@ -206,7 +227,7 @@ const verifyOrder = async (req, res) => {
         if (success === "true") {
             const updatedOrder = await orderModel.findByIdAndUpdate(
                 orderId,
-                { 
+                {
                     payment: true,
                 },
                 { new: true }
@@ -258,12 +279,12 @@ const getOrderById = async (req, res) => {
     }
 };
 
-export { 
-    placeOrder, 
-    listOrders, 
-    userOrders, 
-    updateStatus, 
-    verifyOrder, 
+export {
+    placeOrder,
+    listOrders,
+    userOrders,
+    updateStatus,
+    verifyOrder,
     placeOrderCod,
-    getOrderById 
+    getOrderById
 };

@@ -12,10 +12,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import Verify from './pages/Verify/Verify'
 import Settings from './pages/Settings/Settings'
 import OrderSuccess from './pages/OrderSuccess/OrderSuccess'
+import CartSidebar from './components/CartSidebar/CartSidebar'
 
 const App = () => {
 
-  const [showLogin,setShowLogin] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
   const hideFooter =
     location.pathname === '/cart' ||
@@ -25,18 +26,20 @@ const App = () => {
 
   return (
     <>
-      <ToastContainer/>
-      {showLogin ? <LoginPopup setShowLogin={setShowLogin}/> : null}
+      <ToastContainer />
+      {showLogin ? <LoginPopup setShowLogin={setShowLogin} /> : null}
       <div className='app'>
-        <Navbar setShowLogin={setShowLogin}/>
+        <Navbar setShowLogin={setShowLogin} />
+        {/* Helper function or check for sidebar visibility */}
+        {!(location.pathname === '/cart' || location.pathname === '/order' || location.pathname.startsWith('/order-success')) && <CartSidebar />}
         <Routes>
-          <Route path='/' element={<Home />}/>
-          <Route path='/cart' element={<Cart />}/>
-          <Route path='/order' element={<PlaceOrder />}/>
-          <Route path='/order-success/:orderId' element={<OrderSuccess />}/>
-          <Route path='/myorders' element={<MyOrders />}/>
-          <Route path='/settings' element={<Settings />}/>
-          <Route path='/verify' element={<Verify />}/>
+          <Route path='/' element={<Home />} />
+          <Route path='/cart' element={<Cart />} />
+          <Route path='/order' element={<PlaceOrder />} />
+          <Route path='/order-success/:orderId' element={<OrderSuccess />} />
+          <Route path='/myorders' element={<MyOrders />} />
+          <Route path='/settings' element={<Settings />} />
+          <Route path='/verify' element={<Verify />} />
         </Routes>
       </div>
       {!hideFooter && <Footer />}

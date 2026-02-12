@@ -5,7 +5,7 @@ export const StoreContext = createContext(null);
 
 const StoreContextProvider = (props) => {
 
-    const url = "http://localhost:4000"
+    const url = "http://localhost:4000";
     const [food_list, setFoodList] = useState([]);
     const [cartItems, setCartItems] = useState({});
     const [token, setToken] = useState("")
@@ -39,14 +39,14 @@ const StoreContextProvider = (props) => {
         let totalAmount = 0;
         for (const item in cartItems) {
             try {
-              if (cartItems[item] > 0) {
-                let itemInfo = food_list.find((product) => product._id === item);
-                totalAmount += itemInfo.price * cartItems[item];
-            }  
+                if (cartItems[item] > 0) {
+                    let itemInfo = food_list.find((product) => product._id === item);
+                    totalAmount += itemInfo.price * cartItems[item];
+                }
             } catch (error) {
-                
+
             }
-            
+
         }
         return totalAmount;
     }
@@ -61,15 +61,19 @@ const StoreContextProvider = (props) => {
         setCartItems(response.data.cartData);
     }
 
+    const [userData, setUserData] = useState({}); // Added to store full user profile
+
     const loadProfile = async (tokenValue) => {
         try {
             const response = await axios.get(url + "/api/user/profile", {
                 headers: { token: tokenValue }
             });
             if (response.data.success && response.data.user) {
-                const { name, avatarUrl } = response.data.user;
+                const { name, avatarUrl, email, phone, address } = response.data.user; // Assume these fields exist
                 setProfileName(name || "");
                 setProfileAvatar(avatarUrl || "");
+                setUserData(response.data.user); // Store full user data
+
                 // opcionálisan: cache localStorage-ban, de a forrás a backend marad
                 localStorage.setItem('profileName', name || "");
                 localStorage.setItem('profileAvatar', avatarUrl || "");
@@ -120,7 +124,8 @@ const StoreContextProvider = (props) => {
         setProfileName,
         profileAvatar,
         setProfileAvatar,
-        loadProfile
+        loadProfile,
+        userData // Added to context value
     };
 
     return (

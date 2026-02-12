@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import './Add.css'
-import { assets, url } from '../../assets/assets';
+import { assets } from '../../assets/assets';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const Add = () => {
+const Add = ({ url }) => {
 
 
     const [image, setImage] = useState(false);
@@ -12,7 +12,8 @@ const Add = () => {
         name: "",
         description: "",
         price: "",
-        category: "Hamburger"
+        category: "Hamburger",
+        rating: 5
     });
 
     const onSubmitHandler = async (event) => {
@@ -23,11 +24,22 @@ const Add = () => {
             return null;
         }
 
+        if (Number(data.price) < 0) {
+            toast.error('Az ár nem lehet negatív');
+            return null;
+        }
+
+        if (Number(data.rating) < 0 || Number(data.rating) > 5) {
+            toast.error('Az értékelés 0 és 5 között lehet');
+            return null;
+        }
+
         const formData = new FormData();
         formData.append("name", data.name);
         formData.append("description", data.description);
         formData.append("price", Number(data.price));
         formData.append("category", data.category);
+        formData.append("rating", Number(data.rating));
         formData.append("image", image);
         const response = await axios.post(`${url}/api/food/add`, formData);
         if (response.data.success) {
@@ -79,13 +91,17 @@ const Add = () => {
                             <option value="Piritos">Piritos</option>
                             <option value="Italok">Italok</option>
                             <option value="Snackek">Snackek</option>
-                           
-                            
+
+
                         </select>
                     </div>
                     <div className='add-price flex-col'>
                         <p>Termék ára</p>
-                        <input type="Number" name='price' onChange={onChangeHandler} value={data.price} placeholder=' x Ft' />
+                        <input type="Number" name='price' onChange={onChangeHandler} value={data.price} placeholder=' x Ft' min="0" />
+                    </div>
+                    <div className='add-rating flex-col'>
+                        <p>Értékelés (0-5)</p>
+                        <input type="Number" name='rating' onChange={onChangeHandler} value={data.rating} placeholder='5' min="0" max="5" />
                     </div>
                 </div>
                 <button type='submit' className='add-btn' >HOZZÁADÁS</button>

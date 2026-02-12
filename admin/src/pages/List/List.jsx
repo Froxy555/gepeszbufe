@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './List.css'
-import { url, currency } from '../../assets/assets'
+import { currency } from '../../assets/assets'
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-const List = () => {
+const List = ({ url }) => {
 
   const [list, setList] = useState([]);
 
@@ -35,6 +36,8 @@ const List = () => {
     fetchList();
   }, [])
 
+  const navigate = useNavigate();
+
   return (
     <div className='list add flex-col'>
       <div className='list-table'>
@@ -43,6 +46,7 @@ const List = () => {
           <b>Név</b>
           <b>Kategória</b>
           <b>Ár</b>
+          <b>Szerk</b>
           <b>Törlés</b>
         </div>
         {list.map((item, index) => {
@@ -52,6 +56,7 @@ const List = () => {
               <p>{item.name}</p>
               <p>{item.category}</p>
               <p>{item.price}{currency}</p>
+              <p className='cursor' onClick={() => navigate('/edit', { state: { product: item } })}>✎</p>
               <p className='cursor' onClick={() => removeFood(item._id)}>x</p>
             </div>
           )

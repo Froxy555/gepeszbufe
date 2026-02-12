@@ -23,8 +23,9 @@ const addFood = async (req, res) => {
             name: req.body.name,
             description: req.body.description,
             price: req.body.price,
-            category:req.body.category,
+            category: req.body.category,
             image: image_filename,
+            rating: req.body.rating || 5 // added rating
         })
 
         await food.save();
@@ -52,4 +53,35 @@ const removeFood = async (req, res) => {
 
 }
 
-export { listFood, addFood, removeFood }
+// update food
+const updateFood = async (req, res) => {
+    try {
+        const { id, name, description, price, category, available, rating } = req.body;
+
+        let updateData = {
+            name,
+            description,
+            price,
+            category,
+            available: available === 'true' || available === true,
+            rating: rating ? Number(rating) : undefined
+        };
+
+        if (req.file) {
+            // If new image uploaded, delete old one and set new one
+            const food = await foodModel.findById(id);
+            if (food && food.image) {
+                fs.unlink(`uploads/${food.image}`, () => { });
+            }
+            updateData.image = req.file.filename;
+        }
+
+        await foodModel.findByIdAndUpdate(id, updateData);
+        res.json({ success: true, message: "Termék frissítve" });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: "Hiba a termék frissítésekor" });
+    }
+}
+
+export { listFood, addFood, removeFood, updateFood }

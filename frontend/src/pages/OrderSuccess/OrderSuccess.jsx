@@ -18,10 +18,11 @@ const OrderSuccess = () => {
   const [randomCode, setRandomCode] = useState(initialCode);
 
   useEffect(() => {
-    if (!token) {
-      navigate('/');
-      return;
-    }
+    // Allow guests to view order success
+    // if (!token) {
+    //   navigate('/');
+    //   return;
+    // }
 
     const fetchOrder = async () => {
       try {

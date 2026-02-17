@@ -1,9 +1,9 @@
 import userModel from "../models/userModel.js"
 
-// add to user cart  
+// hozzaadas a felhasznalo kosarahoz
 const addToCart = async (req, res) => {
    try {
-      let userData = await userModel.findOne({_id:req.body.userId});
+      let userData = await userModel.findOne({ _id: req.body.userId });
       let cartData = await userData.cartData;
       if (!cartData[req.body.itemId]) {
          cartData[req.body.itemId] = 1;
@@ -11,15 +11,15 @@ const addToCart = async (req, res) => {
       else {
          cartData[req.body.itemId] += 1;
       }
-      await userModel.findByIdAndUpdate(req.body.userId, {cartData});
-      res.json({ success: true, message: "Added To Cart" });
+      await userModel.findByIdAndUpdate(req.body.userId, { cartData });
+      res.json({ success: true, message: "Hozzáadva a kosárhoz" });
    } catch (error) {
       console.log(error);
-      res.json({ success: false, message: "Error" })
+      res.json({ success: false, message: "Hiba történt" })
    }
 }
 
-// remove food from user cart
+// kaja eltavolitasa a kosarbol
 const removeFromCart = async (req, res) => {
    try {
       let userData = await userModel.findById(req.body.userId);
@@ -27,24 +27,24 @@ const removeFromCart = async (req, res) => {
       if (cartData[req.body.itemId] > 0) {
          cartData[req.body.itemId] -= 1;
       }
-      await userModel.findByIdAndUpdate(req.body.userId, {cartData});
-      res.json({ success: true, message: "Removed From Cart" });
+      await userModel.findByIdAndUpdate(req.body.userId, { cartData });
+      res.json({ success: true, message: "Eltávolítva a kosárból" });
    } catch (error) {
       console.log(error);
-      res.json({ success: false, message: "Error" })
+      res.json({ success: false, message: "Hiba történt" })
    }
 
 }
 
-// get user cart
+// felhasznalo kosara
 const getCart = async (req, res) => {
    try {
       let userData = await userModel.findById(req.body.userId);
       let cartData = await userData.cartData;
-      res.json({ success: true, cartData:cartData });
+      res.json({ success: true, cartData: cartData });
    } catch (error) {
       console.log(error);
-      res.json({ success: false, message: "Error" })
+      res.json({ success: false, message: "Hiba történt" })
    }
 }
 

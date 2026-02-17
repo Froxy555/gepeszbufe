@@ -45,7 +45,7 @@ const Order = () => {
       if (response.data.success) {
         const newOrders = response.data.data;
 
-        // Check for new orders
+        // uj rendeles
         if (isAutoRefresh && newOrders.length > previousOrdersLength.current) {
           playNotificationSound();
           toast.info("Új rendelés érkezett!");
@@ -72,7 +72,7 @@ const Order = () => {
       });
 
       if (response.data.success) {
-        await fetchAllOrders(); // Re-fetch, but not auto-refresh, so no sound
+        await fetchAllOrders(); 
         toast.success("Státusz sikeresen frissítve");
       }
     } catch (error) {
@@ -82,9 +82,8 @@ const Order = () => {
   };
 
   useEffect(() => {
-    fetchAllOrders(); // Initial fetch
-
-    // Auto refresh every 10 seconds
+    fetchAllOrders(); 
+    // auto frissites 10 mp
     const intervalId = setInterval(() => {
       fetchAllOrders(true);
     }, 10000);
@@ -119,7 +118,7 @@ const Order = () => {
                   <p><strong>Telefonszám:</strong> {order.address.phone}</p>
                   <p><strong>Rendelés kódja:</strong> <span className="order-item-code">{order.randomCode}</span></p>
 
-                  {/* Display the note/special request with improved visibility */}
+                  {/* megjegyzes */}
                   {order.note && order.note !== "" && (
                     <p className="special-request">
                       <strong>Megjegyzés:</strong>

@@ -3,10 +3,12 @@ import './FoodDisplay.css'
 import FoodItem from '../FoodItem/FoodItem'
 import { StoreContext } from '../../Context/StoreContext'
 
+// Étel megjelenítő komponens
 const FoodDisplay = ({ category }) => {
 
   const { food_list, searchTerm, setSearchTerm } = useContext(StoreContext);
 
+  // Lista szűrése kategória és keresési kifejezés alapján
   const filteredList = food_list.filter((item) => {
     const matchesCategory = category === 'All' || category === item.category;
     const matchesSearch = !searchTerm || item.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -15,6 +17,7 @@ const FoodDisplay = ({ category }) => {
 
   return (
     <div className='food-display section animate-fade-up' id='food-display'>
+      {/* Fejlé: cím és keresőmező */}
       <div className='food-display-header'>
         <h2>Menü</h2>
         <input
@@ -26,6 +29,7 @@ const FoodDisplay = ({ category }) => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
+      {/* Szurt etel lista megjelenitese */}
       <div className='food-display-list'>
         {filteredList.map((item) => (
           <FoodItem

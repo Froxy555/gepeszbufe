@@ -4,36 +4,38 @@ import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 const currency = "huf";
-const deliveryCharge = 0;
+
 const frontend_URL =
     process.env.NODE_ENV === "production"
         ? "https://gepeszbufe-frontend.onrender.com"
         : "http://localhost:5173";
 
+// rendeles leadasa (stripe fizetessel)
 const placeOrder = async (req, res) => {
     try {
+        // uj rendeles letrehozasa az adatbazisban
         const newOrder = new orderModel({
             userId: req.body.userId,
             items: req.body.items,
             amount: req.body.amount,
             address: req.body.address,
-            note: req.body.note, // This will contain the special request
+            note: req.body.note,
             date: new Date(),
         });
 
         const savedOrder = await newOrder.save();
 
-        // Only clear cart if it's a real user (not guest)
+        // kosar uritese a rendeles utan (csak regisztralt felhasznaloknal)
         if (req.body.userId && !req.body.userId.toString().startsWith("guest_")) {
             await userModel.findByIdAndUpdate(req.body.userId, { cartData: {} });
 
-            // Update user profile with phone and name if provided
+            // felhasznaloi adatok frissitese (telefonszam, nev) ha meg lett adva
             const updates = {};
             if (req.body.address.phone) updates.phone = req.body.address.phone;
             if (req.body.address.firstName && req.body.address.lastName) {
                 updates.name = `${req.body.address.lastName} ${req.body.address.firstName}`;
             } else if (req.body.address.firstName) {
-                updates.name = req.body.address.firstName; // Fallback
+                updates.name = req.body.address.firstName;
             }
 
             if (Object.keys(updates).length > 0) {
@@ -41,6 +43,7 @@ const placeOrder = async (req, res) => {
             }
         }
 
+        // stripe tetelek osszeallitasa
         const line_items = req.body.items.map((item) => ({
             price_data: {
                 currency: currency,
@@ -52,17 +55,9 @@ const placeOrder = async (req, res) => {
             quantity: item.quantity
         }));
 
-        line_items.push({
-            price_data: {
-                currency: currency,
-                product_data: {
-                    name: "Delivery Charge"
-                },
-                unit_amount: deliveryCharge * 100
-            },
-            quantity: 1
-        });
 
+
+        // stripe session letrehozasa
         const session = await stripe.checkout.sessions.create({
             success_url: `${frontend_URL}/verify?success=true&orderId=${savedOrder._id}`,
             cancel_url: `${frontend_URL}/verify?success=false&orderId=${savedOrder._id}`,
@@ -74,54 +69,53 @@ const placeOrder = async (req, res) => {
 
     } catch (error) {
         console.error('Place order error:', error);
-        res.status(500).json({ success: false, message: "Error placing order", error: error.message });
+        res.status(500).json({ success: false, message: "Hiba a rendelés leadásakor", error: error.message });
     }
 };
 
+// rendeles leadasa (utanvetes fizetessel)
 const placeOrderCod = async (req, res) => {
     try {
-        // Detailed request logging removed
-
-        // Extract data safely with defaults
+        // adatok kinyerese a keresbol
         const userId = req.body.userId || null;
         const items = req.body.items || [];
         const amount = req.body.amount || 0;
         const address = req.body.address || {};
         const noteText = req.body.note || "";
 
-        // Create order with explicit field assignment
+        // rendeles letrehozasa az adatbazisban
         const newOrder = new orderModel({
             userId,
             items,
             amount,
             address,
-            note: noteText, // Explicitly assign note
+            note: noteText,
             payment: true,
             date: new Date(),
             status: "Feldolgozás alatt"
         });
 
-        // Save the order with explicit error handling
+        // rendeles mentese
         let savedOrder;
         try {
             savedOrder = await newOrder.save();
         } catch (saveError) {
             console.error("Database save error:", saveError);
-            throw saveError; // Re-throw to be caught by the outer try/catch
+            throw saveError;
         }
 
-        // Update user's cart
+        // kosar uritese sikeres rendeles utan
         try {
             if (userId && !userId.toString().startsWith("guest_")) {
                 await userModel.findByIdAndUpdate(userId, { cartData: {} });
 
-                // Update user profile with phone and name if provided
+                // profil frissitese a megadott adatokkal
                 const updates = {};
                 if (address.phone) updates.phone = address.phone;
                 if (address.firstName && address.lastName) {
                     updates.name = `${address.lastName} ${address.firstName}`;
                 } else if (address.firstName) {
-                    updates.name = address.firstName; // Fallback
+                    updates.name = address.firstName;
                 }
 
                 if (Object.keys(updates).length > 0) {
@@ -130,10 +124,9 @@ const placeOrderCod = async (req, res) => {
             }
         } catch (cartError) {
             console.warn("Warning: Failed to clear user cart:", cartError.message);
-            // Continue even if cart clear fails
         }
 
-        // Send success response
+        // valasz kuldese
         res.json({
             success: true,
             message: "Rendelés elküldve",
@@ -146,12 +139,13 @@ const placeOrderCod = async (req, res) => {
         console.error('Error stack:', error.stack);
         res.status(500).json({
             success: false,
-            message: "Error placing COD order",
+            message: "Hiba a rendelés leadásakor",
             error: error.message
         });
     }
 };
 
+// osszes rendeles listazasa
 const listOrders = async (req, res) => {
     try {
         const orders = await orderModel
@@ -169,10 +163,11 @@ const listOrders = async (req, res) => {
         });
     } catch (error) {
         console.error('List orders error:', error);
-        res.status(500).json({ success: false, message: "Error fetching orders", error: error.message });
+        res.status(500).json({ success: false, message: "Hiba a rendelések lekérésekor", error: error.message });
     }
 };
 
+// felhasznalo rendelesei
 const userOrders = async (req, res) => {
     try {
         const orders = await orderModel
@@ -190,10 +185,11 @@ const userOrders = async (req, res) => {
         });
     } catch (error) {
         console.error('User orders error:', error);
-        res.status(500).json({ success: false, message: "Error fetching user orders", error: error.message });
+        res.status(500).json({ success: false, message: "Hiba a rendelések lekérésekor", error: error.message });
     }
 };
 
+// statusz frissitese
 const updateStatus = async (req, res) => {
     try {
         const { orderId, status } = req.body;
@@ -210,21 +206,23 @@ const updateStatus = async (req, res) => {
 
         if (!updatedOrder) {
             console.log('Order not found:', orderId);
-            return res.status(404).json({ success: false, message: "Order not found" });
+            return res.status(404).json({ success: false, message: "Rendelés nem található" });
         }
 
         console.log('Order updated successfully:', updatedOrder);
-        res.json({ success: true, message: "Status Updated", order: updatedOrder });
+        res.json({ success: true, message: "Állapot frissítve", order: updatedOrder });
     } catch (error) {
         console.error('Update status error:', error);
-        res.status(500).json({ success: false, message: "Error updating status", error: error.message });
+        res.status(500).json({ success: false, message: "Hiba történt az állapot frissítésekor", error: error.message });
     }
 };
 
+// rendeles ellenorzese (sikeres fizetes eseten statusz valtoztatas)
 const verifyOrder = async (req, res) => {
     const { orderId, success } = req.body;
     try {
         if (success === "true") {
+            // ha sikeres a fizetes, payment statusz true-ra allitasa
             const updatedOrder = await orderModel.findByIdAndUpdate(
                 orderId,
                 {
@@ -234,20 +232,22 @@ const verifyOrder = async (req, res) => {
             );
 
             if (!updatedOrder) {
-                return res.status(404).json({ success: false, message: "Order not found" });
+                return res.status(404).json({ success: false, message: "Rendelés nem található" });
             }
 
-            res.json({ success: true, message: "Paid", randomCode: updatedOrder.randomCode });
+            res.json({ success: true, message: "Fizetve", randomCode: updatedOrder.randomCode });
         } else {
+            // ha sikertelen, rendeles torlese
             await orderModel.findByIdAndDelete(orderId);
-            res.json({ success: false, message: "Not Paid" });
+            res.json({ success: false, message: "Sikertelen fizetés" });
         }
     } catch (error) {
         console.error('Verify order error:', error);
-        res.status(500).json({ success: false, message: "Error verifying order", error: error.message });
+        res.status(500).json({ success: false, message: "Hiba a rendelés ellenőrzésekor", error: error.message });
     }
 };
 
+// rendeles lekerese id alapjan
 const getOrderById = async (req, res) => {
     const { id } = req.params;
     const userId = req.body.userId; // authMiddleware sets this from token
@@ -255,12 +255,12 @@ const getOrderById = async (req, res) => {
     try {
         const order = await orderModel.findById(id).lean();
         if (!order) {
-            return res.status(404).json({ success: false, message: "Order not found" });
+            return res.status(404).json({ success: false, message: "Rendelés nem található" });
         }
 
         // Optional user check – if nem egyezik, 403-at adunk vissza
         if (userId && order.userId && order.userId.toString() !== String(userId)) {
-            return res.status(403).json({ success: false, message: "Not allowed to view this order" });
+            return res.status(403).json({ success: false, message: "Nincs jogosultsága megtekinteni ezt a rendelést" });
         }
 
         const formattedDate = new Date(order.date).toLocaleString('hu-HU');
@@ -275,7 +275,71 @@ const getOrderById = async (req, res) => {
         });
     } catch (error) {
         console.error('Get order by id error:', error);
-        res.status(500).json({ success: false, message: "Error fetching order", error: error.message });
+        res.status(500).json({ success: false, message: "Hiba a rendelés lekérésekor", error: error.message });
+    }
+};
+
+// Statisztikák lekérése az admin dashboardhoz
+const getStats = async (req, res) => {
+    try {
+        const orders = await orderModel.find({});
+
+        // 1. Összes bevétel és rendelési szám
+        let totalRevenue = 0;
+        let totalOrders = orders.length;
+
+        // 2. Értékesítés napokra lebontva (utolsó 7 nap)
+        const salesPerDay = {};
+        const now = new Date();
+        for (let i = 6; i >= 0; i--) {
+            const date = new Date(now);
+            date.setDate(now.getDate() - i);
+            const dateString = date.toISOString().split('T')[0];
+            salesPerDay[dateString] = 0;
+        }
+
+        // 3. Top termékek
+        const productSales = {};
+
+        orders.forEach(order => {
+            if (order.payment) {
+                totalRevenue += order.amount;
+
+                const orderDate = new Date(order.date).toISOString().split('T')[0];
+                if (salesPerDay[orderDate] !== undefined) {
+                    salesPerDay[orderDate] += order.amount;
+                }
+
+                order.items.forEach(item => {
+                    if (productSales[item.name]) {
+                        productSales[item.name] += item.quantity;
+                    } else {
+                        productSales[item.name] = item.quantity;
+                    }
+                });
+            }
+        });
+
+        // Top 5 termék sorbarendezése
+        const topProducts = Object.keys(productSales)
+            .map(name => ({ name, count: productSales[name] }))
+            .sort((a, b) => b.count - a.count)
+            .slice(0, 5);
+
+        res.json({
+            success: true,
+            totalRevenue,
+            totalOrders,
+            salesData: {
+                labels: Object.keys(salesPerDay),
+                data: Object.values(salesPerDay)
+            },
+            topProducts
+        });
+
+    } catch (error) {
+        console.error('Get stats error:', error);
+        res.status(500).json({ success: false, message: "Hiba a statisztikák lekérésekor", error: error.message });
     }
 };
 
@@ -286,5 +350,6 @@ export {
     updateStatus,
     verifyOrder,
     placeOrderCod,
-    getOrderById
+    getOrderById,
+    getStats
 };

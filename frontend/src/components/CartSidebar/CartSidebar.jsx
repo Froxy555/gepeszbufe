@@ -3,6 +3,7 @@ import './CartSidebar.css'
 import { StoreContext } from '../../Context/StoreContext'
 import { useNavigate } from 'react-router-dom'
 
+// Kosár oldalsáv komponens
 const CartSidebar = () => {
 
     const { cartItems, food_list, removeFromCart, getTotalCartAmount, url, currency } = useContext(StoreContext);
@@ -10,24 +11,26 @@ const CartSidebar = () => {
 
     const totalAmount = getTotalCartAmount();
 
-    // Safety check for cartItems and food_list to prevent crash
+    // Biztonsági ellenőrzés: cartItems és food_list létezésének vizsgálata
     if (!cartItems || typeof cartItems !== 'object' || !food_list || !Array.isArray(food_list)) {
         return null;
     }
 
-    // Check if cart has any items
+    // Ellenőrzés: van-e tétel a kosárban
     const hasItems = Object.values(cartItems).some(quantity => quantity > 0);
 
     if (!hasItems) {
-        return null; // Don't render if empty
+        return null; // Ne jelenjen meg, ha üres
     }
 
     return (
         <div className='cart-sidebar'>
+            {/* Fejléc rész */}
             <div className="cart-sidebar-header">
                 <h3>Kosár tartalma</h3>
             </div>
 
+            {/* Kosár elemek listázása */}
             <div className="cart-sidebar-items">
                 {food_list.map((item, index) => {
                     if (cartItems[item._id] > 0) {
@@ -41,6 +44,7 @@ const CartSidebar = () => {
                                 <div className="cart-sidebar-item-quantity">
                                     {cartItems[item._id]} db
                                 </div>
+                                {/* Elem eltávolítása gomb */}
                                 <div onClick={() => removeFromCart(item._id)} style={{ cursor: 'pointer', color: '#aaa', fontSize: '18px' }}>
                                     ×
                                 </div>
@@ -50,6 +54,7 @@ const CartSidebar = () => {
                 })}
             </div>
 
+            {/* Lábléc rész: összegek és gombok */}
             <div className="cart-sidebar-footer">
                 <div className="cart-sidebar-total">
                     <span>Részösszeg:</span>

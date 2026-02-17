@@ -13,11 +13,16 @@ import Verify from './pages/Verify/Verify'
 import Settings from './pages/Settings/Settings'
 import OrderSuccess from './pages/OrderSuccess/OrderSuccess'
 import CartSidebar from './components/CartSidebar/CartSidebar'
+import MobileCartButton from './components/MobileCartButton/MobileCartButton'
 
+// Fő alkalmazás komponens
 const App = () => {
 
+  // Bejelentkező felugró ablak megjelenítésének állapota
   const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
+
+  // Footer elrejtése bizonyos oldalakon a tisztább megjelenés érdekében
   const hideFooter =
     location.pathname === '/cart' ||
     location.pathname === '/myorders' ||
@@ -30,8 +35,8 @@ const App = () => {
       {showLogin ? <LoginPopup setShowLogin={setShowLogin} /> : null}
       <div className='app'>
         <Navbar setShowLogin={setShowLogin} />
-        {/* Helper function or check for sidebar visibility */}
         {!(location.pathname === '/cart' || location.pathname === '/order' || location.pathname.startsWith('/order-success')) && <CartSidebar />}
+        <MobileCartButton />
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path='/cart' element={<Cart />} />

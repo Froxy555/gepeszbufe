@@ -1,27 +1,27 @@
-.order-success-page{
+.order-success-page {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 30px 0 40px;
 }
 
-.order-success-card{
+.order-success-card {
   background: #ffffff;
   border-radius: 24px;
   padding: 24px 26px 26px;
   max-width: 520px;
   width: 100%;
-  box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.12);
   text-align: center;
 }
 
-.order-success-icon-wrapper{
+.order-success-icon-wrapper {
   display: flex;
   justify-content: center;
   margin-bottom: 12px;
 }
 
-.order-success-icon{
+.order-success-icon {
   width: 64px;
   height: 64px;
   border-radius: 50%;
@@ -31,7 +31,7 @@
   animation: pulse-check 1s ease-out;
 }
 
-.order-success-icon::after{
+.order-success-icon::after {
   content: "";
   position: absolute;
   left: 50%;
@@ -40,32 +40,43 @@
   height: 14px;
   border-left: 3px solid #22c55e;
   border-bottom: 3px solid #22c55e;
-  transform: translate(-50%,-50%) rotate(-45deg);
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 
 @keyframes pulse-check {
-  0% { transform: scale(0.6); opacity: 0; }
-  60% { transform: scale(1.05); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(0.6);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-.order-success-subtitle{
+.order-success-subtitle {
   font-size: 14px;
   color: #555;
   margin-top: 4px;
 }
 
-.order-success-code{
+.order-success-code {
   margin: 16px 0 10px;
 }
 
-.order-success-code p{
+.order-success-code p {
   margin: 0;
   font-size: 13px;
   color: #777;
 }
 
-.order-success-code span{
+.order-success-code span {
   display: inline-block;
   margin-top: 4px;
   padding: 8px 16px;
@@ -77,13 +88,13 @@
   letter-spacing: 0.2em;
 }
 
-.order-success-details{
+.order-success-details {
   margin-top: 10px;
   padding-top: 10px;
-  border-top: 1px solid rgba(0,0,0,0.05);
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.order-success-row{
+.order-success-row {
   display: flex;
   justify-content: space-between;
   font-size: 13px;
@@ -91,28 +102,28 @@
   margin-bottom: 4px;
 }
 
-.order-success-row.total span:last-child{
+.order-success-row.total span:last-child {
   font-weight: 700;
   color: #ff4c24;
 }
 
-.order-success-items{
+.order-success-items {
   text-align: left;
   margin-top: 16px;
 }
 
-.order-success-items h3{
+.order-success-items h3 {
   font-size: 15px;
   margin-bottom: 6px;
 }
 
-.order-success-items ul{
+.order-success-items ul {
   list-style: none;
   padding: 0;
   margin: 0;
 }
 
-.order-success-items li{
+.order-success-items li {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -120,33 +131,33 @@
   padding: 6px 0;
 }
 
-.order-success-items li + li{
-  border-top: 1px dashed rgba(0,0,0,0.06);
+.order-success-items li+li {
+  border-top: 1px dashed rgba(0, 0, 0, 0.06);
 }
 
-.item-name{
+.item-name {
   flex: 1;
 }
 
-.item-qty{
+.item-qty {
   width: 60px;
   text-align: center;
   color: #777;
 }
 
-.item-price{
+.item-price {
   width: 80px;
   text-align: right;
 }
 
-.order-success-actions{
+.order-success-actions {
   display: flex;
   gap: 10px;
   justify-content: center;
   margin-top: 18px;
 }
 
-.order-success-actions button{
+.order-success-actions button {
   border: none;
   border-radius: 999px;
   padding: 8px 16px;
@@ -154,26 +165,26 @@
   cursor: pointer;
 }
 
-.order-success-actions .primary{
+.order-success-actions .primary {
   background: linear-gradient(135deg, #ff4c24, #ff9f5e);
   color: #fff;
 }
 
-.order-success-actions button:not(.primary){
+.order-success-actions button:not(.primary) {
   background: #f4f4f5;
   color: #444;
 }
 
-@media (max-width: 600px){
-  .order-success-card{
+@media (max-width: 600px) {
+  .order-success-card {
     padding: 20px 18px 22px;
   }
 
-  .order-success-actions{
+  .order-success-actions {
     flex-direction: column;
   }
 
-  .order-success-actions button{
+  .order-success-actions button {
     width: 100%;
   }
 }

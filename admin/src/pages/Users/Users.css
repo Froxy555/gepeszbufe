@@ -27,8 +27,6 @@
 @media (max-width: 600px) {
     .users-table-format {
         grid-template-columns: 1fr 1fr 1fr;
-        /* Hide some cols on mobile or stack them */
     }
 
-    /* Hide phone/id on mobile if needed */
 }

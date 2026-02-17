@@ -3,26 +3,26 @@ import './Cart.css'
 import { StoreContext } from '../../Context/StoreContext'
 import { useNavigate } from 'react-router-dom';
 
+// Kosár oldal komponens
 const Cart = () => {
 
-  const {cartItems, food_list, removeFromCart, getTotalCartAmount, url, currency, deliveryCharge, setSpecialRequest} = useContext(StoreContext);
+  const { cartItems, food_list, removeFromCart, getTotalCartAmount, url, currency, setSpecialRequest } = useContext(StoreContext);
   const navigate = useNavigate();
   const [specialRequestText, setSpecialRequestText] = useState('');
 
-  // Load special request from localStorage on component mount
+  // Speciális kérés betöltése localStorage-ból, ha létezik
   useEffect(() => {
     window.scrollTo(0, 0);
-    
-    // Load special request from localStorage if it exists
+
+    // Kérés betöltése
     const savedRequest = localStorage.getItem("specialRequest");
     if (savedRequest) {
       setSpecialRequestText(savedRequest);
       setSpecialRequest(savedRequest);
-      console.log("Loaded special request from localStorage:", savedRequest);
     }
   }, [setSpecialRequest]);
 
-  // Handle special request input changes
+  // Speciális kérés input mező változásának kezelése
   const handleSpecialRequestChange = (e) => {
     const value = e.target.value;
     setSpecialRequestText(value);
@@ -30,8 +30,10 @@ const Cart = () => {
     localStorage.setItem("specialRequest", value);
   };
 
+  // Kosárban lévő elemek szűrése
   const itemsInCart = food_list.filter((item) => cartItems[item._id] > 0);
-  const totalAmount = getTotalCartAmount() === 0 ? 0 : getTotalCartAmount() + deliveryCharge;
+  // Végösszeg számolása
+  const totalAmount = getTotalCartAmount() === 0 ? 0 : getTotalCartAmount();
 
   return (
     <div className='cart section animate-fade-up'>

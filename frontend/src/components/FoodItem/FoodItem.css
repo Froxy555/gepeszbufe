@@ -23,8 +23,7 @@
     position: relative;
     width: 100%;
     aspect-ratio: 4/3;
-    /* Ensure consistent image aspect ratio */
-    overflow: hidden;
+    aspect-ratio: 4/3;
 }
 
 .food-item-image {
@@ -96,10 +95,7 @@
     line-height: 1.3;
 }
 
-.food-item-name-rating img {
-    width: 60px;
-    margin-top: 2px;
-}
+
 
 .food-item-desc {
     color: #888;
@@ -108,6 +104,7 @@
     margin-bottom: 15px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -129,14 +126,13 @@
         font-size: 15px;
     }
 
-    .food-item-name-rating img {
-        width: 50px;
-    }
+
 
     .food-item-desc {
         font-size: 11px;
         margin-bottom: 10px;
         -webkit-line-clamp: 2;
+        line-clamp: 2;
     }
 
     .food-item-price {

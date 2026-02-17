@@ -4,26 +4,24 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { StoreContext } from '../../Context/StoreContext';
 
+// Sikeres rendelés visszajelző oldal komponens
 const OrderSuccess = () => {
   const { orderId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const { url, token, currency } = useContext(StoreContext);
 
+  // Állapotok a rendelés adatainak, a betöltésnek és a hibáknak
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Átvételi kód beállítása (ha érkezik a navigációs állapottal)
   const initialCode = location.state?.randomCode || '';
   const [randomCode, setRandomCode] = useState(initialCode);
 
+  // Rendelés adatainak lekérése a szerverről
   useEffect(() => {
-    // Allow guests to view order success
-    // if (!token) {
-    //   navigate('/');
-    //   return;
-    // }
-
     const fetchOrder = async () => {
       try {
         const response = await axios.get(`${url}/api/order/${orderId}`, {
@@ -45,6 +43,7 @@ const OrderSuccess = () => {
     fetchOrder();
   }, [orderId, token, url, navigate, initialCode]);
 
+  // Betöltési fázis megjelenítése
   if (loading) {
     return (
       <div className="order-success-page">
@@ -53,6 +52,7 @@ const OrderSuccess = () => {
     );
   }
 
+  // Hibaüzenet megjelenítése, ha nem sikerült a betöltés
   if (error || !order) {
     return (
       <div className="order-success-page">
@@ -69,12 +69,14 @@ const OrderSuccess = () => {
   return (
     <div className="order-success-page section animate-fade-up">
       <div className="order-success-card">
+        {/* Siker ikon */}
         <div className="order-success-icon-wrapper">
           <div className="order-success-icon" />
         </div>
         <h2>Sikeres megrendelés!</h2>
         <p className="order-success-subtitle">Köszönjük a rendelésed, hamarosan megkezdjük a feldolgozást.</p>
 
+        {/* Átvételi kód megjelenítése */}
         {randomCode && (
           <div className="order-success-code">
             <p>Átvételi kódod:</p>
@@ -82,6 +84,7 @@ const OrderSuccess = () => {
           </div>
         )}
 
+        {/* Rendelés alapvető adatai */}
         <div className="order-success-details">
           <div className="order-success-row">
             <span>Rendelés azonosító</span>
@@ -97,6 +100,7 @@ const OrderSuccess = () => {
           </div>
         </div>
 
+        {/* Rendelt tételek listája */}
         <div className="order-success-items">
           <h3>Rendelés részletei</h3>
           <ul>
@@ -110,6 +114,7 @@ const OrderSuccess = () => {
           </ul>
         </div>
 
+        {/* Navigációs gombok */}
         <div className="order-success-actions">
           <button type="button" className="primary" onClick={() => navigate('/myorders')}>
             Rendeléseim megtekintése

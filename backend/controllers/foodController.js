@@ -1,7 +1,7 @@
 import foodModel from "../models/foodModel.js";
 import fs from 'fs'
 
-// all food list
+// osszes kaja listazasa
 const listFood = async (req, res) => {
     try {
         const foods = await foodModel.find({})
@@ -13,7 +13,7 @@ const listFood = async (req, res) => {
 
 }
 
-// add food
+// kaja hozzaadasa
 const addFood = async (req, res) => {
 
     try {
@@ -25,7 +25,7 @@ const addFood = async (req, res) => {
             price: req.body.price,
             category: req.body.category,
             image: image_filename,
-            rating: req.body.rating || 5 // added rating
+            rating: req.body.rating || 5 
         })
 
         await food.save();
@@ -36,7 +36,7 @@ const addFood = async (req, res) => {
     }
 }
 
-// delete food
+// kaja eltavolitasa
 const removeFood = async (req, res) => {
     try {
 
@@ -53,7 +53,7 @@ const removeFood = async (req, res) => {
 
 }
 
-// update food
+// kaja frissitese
 const updateFood = async (req, res) => {
     try {
         const { id, name, description, price, category, available, rating } = req.body;
@@ -68,7 +68,7 @@ const updateFood = async (req, res) => {
         };
 
         if (req.file) {
-            // If new image uploaded, delete old one and set new one
+            // fenykep csereje regirol ujra
             const food = await foodModel.findById(id);
             if (food && food.image) {
                 fs.unlink(`uploads/${food.image}`, () => { });

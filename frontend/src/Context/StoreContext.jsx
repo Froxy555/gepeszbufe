@@ -9,13 +9,13 @@ const StoreContextProvider = (props) => {
     const [food_list, setFoodList] = useState([]);
     const [cartItems, setCartItems] = useState({});
     const [token, setToken] = useState("")
-    const [specialRequest, setSpecialRequest] = useState(""); // Added state for special request
+    const [specialRequest, setSpecialRequest] = useState("");
     const [searchTerm, setSearchTerm] = useState("");
     const [profileName, setProfileName] = useState("");
-    const [profileAvatar, setProfileAvatar] = useState(""); // dataURL vagy backend URL
+    const [profileAvatar, setProfileAvatar] = useState("");
     const currency = " Ft";
-    const deliveryCharge = 0;
 
+    // Kosárba tétel függvény
     const addToCart = async (itemId) => {
         if (!cartItems[itemId]) {
             setCartItems((prev) => ({ ...prev, [itemId]: 1 }));
@@ -28,6 +28,7 @@ const StoreContextProvider = (props) => {
         }
     }
 
+    // Kosárból eltávolítás függvény
     const removeFromCart = async (itemId) => {
         setCartItems((prev) => ({ ...prev, [itemId]: prev[itemId] - 1 }))
         if (token) {
@@ -35,6 +36,7 @@ const StoreContextProvider = (props) => {
         }
     }
 
+    // Kosár végösszegének kiszámítása
     const getTotalCartAmount = () => {
         let totalAmount = 0;
         for (const item in cartItems) {
@@ -51,6 +53,7 @@ const StoreContextProvider = (props) => {
         return totalAmount;
     }
 
+    // Étel lista betöltése
     const fetchFoodList = async () => {
         const response = await axios.get(url + "/api/food/list");
         setFoodList(response.data.data)
@@ -61,20 +64,21 @@ const StoreContextProvider = (props) => {
         setCartItems(response.data.cartData);
     }
 
-    const [userData, setUserData] = useState({}); // Added to store full user profile
+    const [userData, setUserData] = useState({}); // Teljes felhasználói profil tárolása
 
+    // Profil adatok betöltése
     const loadProfile = async (tokenValue) => {
         try {
             const response = await axios.get(url + "/api/user/profile", {
                 headers: { token: tokenValue }
             });
             if (response.data.success && response.data.user) {
-                const { name, avatarUrl, email, phone, address } = response.data.user; // Assume these fields exist
+                const { name, avatarUrl } = response.data.user;
                 setProfileName(name || "");
                 setProfileAvatar(avatarUrl || "");
                 setUserData(response.data.user); // Store full user data
 
-                // opcionálisan: cache localStorage-ban, de a forrás a backend marad
+                // Opcionálisan: cache localStorage-ban, de a forrás a backend marad
                 localStorage.setItem('profileName', name || "");
                 localStorage.setItem('profileAvatar', avatarUrl || "");
             }
@@ -92,7 +96,7 @@ const StoreContextProvider = (props) => {
                 await loadCartData({ token: storedToken });
                 await loadProfile(storedToken);
             } else {
-                // fallback: ha nincs token, csak a localStorage-ben lévő vizuális adatok
+                // Tartalék: ha nincs token, csak a localStorage-ban lévő vizuális adatok
                 const storedName = localStorage.getItem('profileName');
                 const storedAvatar = localStorage.getItem('profileAvatar');
                 if (storedName) setProfileName(storedName);
@@ -115,9 +119,8 @@ const StoreContextProvider = (props) => {
         loadCartData,
         setCartItems,
         currency,
-        deliveryCharge,
-        specialRequest,     // Added to context value
-        setSpecialRequest,  // Added to context value
+        specialRequest,
+        setSpecialRequest,
         searchTerm,
         setSearchTerm,
         profileName,
@@ -125,7 +128,7 @@ const StoreContextProvider = (props) => {
         profileAvatar,
         setProfileAvatar,
         loadProfile,
-        userData // Added to context value
+        userData
     };
 
     return (

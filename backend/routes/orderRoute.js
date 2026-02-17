@@ -1,40 +1,44 @@
 import express from 'express';
 import authMiddleware from '../middleware/auth.js';
-import { 
-    listOrders, 
-    placeOrder, 
-    updateStatus, 
-    userOrders, 
-    verifyOrder, 
+import {
+    listOrders,
+    placeOrder,
+    updateStatus,
+    userOrders,
+    verifyOrder,
     placeOrderCod,
-    getOrderById 
+    getOrderById,
+    getStats
 } from '../controllers/orderController.js';
 
 const orderRouter = express.Router();
 
-// Apply JSON parsing middleware specifically for this router
+// JSON feldolgozás middleware
 orderRouter.use(express.json());
 orderRouter.use(express.urlencoded({ extended: true }));
 
-// List all orders (admin route)
+// Statisztikák lekérése (admin funkció)
+orderRouter.get("/stats", getStats);
+
+// összes rendelés listázása (admin funkció)
 orderRouter.get("/list", listOrders);
 
-// Get single order by id for current user
+// egyedi rendelés lekérése ID alapján (jelenlegi felhasznalo)
 orderRouter.get("/:id", authMiddleware, getOrderById);
 
-// Get user's orders
+// felhasználó saját rendeléseinek lekérése
 orderRouter.post("/userorders", authMiddleware, userOrders);
 
-// Place a new order with Stripe payment
+// új rendelés leadása (Stripe fizetés)
 orderRouter.post("/place", authMiddleware, placeOrder);
 
-// Update order status
+// rendelés státuszának frissítése
 orderRouter.post("/status", updateStatus);
 
-// Verify order payment
+// rendelés fizetésének ellenőrzése
 orderRouter.post("/verify", verifyOrder);
 
-// Place a new order with Cash on Delivery
+// új rendelés leadása (Utánvétes fizetés)
 orderRouter.post("/placecod", authMiddleware, placeOrderCod);
 
 export default orderRouter;

@@ -4,6 +4,7 @@ import { assets } from '../../assets/assets'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { StoreContext } from '../../Context/StoreContext'
 
+// Navigációs sáv komponens
 const Navbar = ({ setShowLogin }) => {
 
   const [menu, setMenu] = useState("home");
@@ -13,6 +14,7 @@ const Navbar = ({ setShowLogin }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Kijelentkezés folyamata
   const logout = () => {
     localStorage.removeItem("token");
     setToken("");
@@ -20,16 +22,19 @@ const Navbar = ({ setShowLogin }) => {
     navigate('/')
   }
 
+  // Ugrás a kosárhoz
   const handleCartClick = () => {
     navigate('/cart');
     setIsMobileMenuOpen(false);
   }
 
+  // Mobil menü megnyitása/bezárása
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen((prev) => !prev);
     setShowProfileMenu(false);
   }
 
+  // Menü pontra kattintás kezelése
   const handleMenuSectionClick = (e) => {
     e.preventDefault();
     setMenu('menu');
@@ -44,6 +49,7 @@ const Navbar = ({ setShowLogin }) => {
     }
   }
 
+  // Kapcsolat menüpont kezelése
   const handleContactClick = (e) => {
     e.preventDefault();
     setMenu('contact');
@@ -54,6 +60,7 @@ const Navbar = ({ setShowLogin }) => {
     }
   }
 
+  // Keresés gomb kezelése
   const handleSearchClick = () => {
     setIsMobileMenuOpen(false);
     // menjünk a menü szekcióhoz, és fókuszáljuk a keresőmezőt
@@ -83,26 +90,30 @@ const Navbar = ({ setShowLogin }) => {
     }
   }
 
+  // Profil menü megjelenítése
   const handleProfileClick = (e) => {
     e.stopPropagation();
     setShowProfileMenu((prev) => !prev);
   }
 
+  // Profil menü elemen belüli kattintás (ne zárja be azonnal)
   const handleProfileMenuClick = (e) => {
     e.stopPropagation();
   }
 
+  // Rendeléseim oldalra navigálás
   const handleOrdersClick = () => {
     navigate('/myorders');
     setShowProfileMenu(false);
   }
 
+  // Beállítások oldalra navigálás
   const handleSettingsClick = () => {
     navigate('/settings');
     setShowProfileMenu(false);
   }
 
-  // Menü bezárása kattintásra
+  // Menü bezárása kattintásra (kívülre)
   useEffect(() => {
     const closeMenus = () => {
       setShowProfileMenu(false);
@@ -117,6 +128,7 @@ const Navbar = ({ setShowLogin }) => {
     };
   }, [showProfileMenu]);
 
+  // Aktív menüpont beállítása az URL alapján
   useEffect(() => {
     if (location.pathname === '/' || location.pathname === '/home') {
       setMenu('home');
@@ -129,7 +141,7 @@ const Navbar = ({ setShowLogin }) => {
     setShowProfileMenu(false);
   }, [location.pathname]);
 
-  // Check if current page is home page
+  // Ellenőrzés: főoldalon vagyunk-e
   const isHomePage = location.pathname === '/' || location.pathname === '/home';
 
   return (

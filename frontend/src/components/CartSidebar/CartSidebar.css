@@ -2,15 +2,14 @@
     position: fixed;
     right: 20px;
     bottom: 20px;
-    /* Sit at the bottom */
-    /* Adjust based on navbar height */
+
     width: 260px;
     background-color: white;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     padding: 20px;
     z-index: 90;
-    /* Below navbar but above content */
+
     max-height: calc(100vh - 120px);
     overflow-y: auto;
     display: flex;
@@ -144,19 +143,9 @@
     background: #fff4f2;
 }
 
-.free-delivery-tag {
-    font-size: 12px;
-    color: #22c55e;
-    background-color: #dcfce7;
-    padding: 4px 8px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    width: fit-content;
-}
 
-/* Hide on smaller screens */
+
+
 @media (max-width: 1100px) {
     .cart-sidebar {
         display: none;

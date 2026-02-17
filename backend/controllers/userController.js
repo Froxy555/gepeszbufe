@@ -3,27 +3,30 @@ import bcrypt from "bcrypt";
 import validator from "validator";
 import userModel from "../models/userModel.js";
 
-//create token
+// token letrehozasa
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET);
 }
 
-//login user
+// felhasznalo bejelentkezes ellenorzese
 const loginUser = async (req, res) => {
     const { email, password } = req.body;
     try {
+        // felhasznalo keresese email alapjan
         const user = await userModel.findOne({ email })
 
         if (!user) {
             return res.json({ success: false, message: "Felhasználó nem létezik" })
         }
 
+        // jelszo osszehasonlitasa
         const isMatch = await bcrypt.compare(password, user.password)
 
         if (!isMatch) {
             return res.json({ success: false, message: "Érvénytelen hitelesítő adatok" })
         }
 
+        // token letrehozasa es valasz kuldese
         const token = createToken(user._id)
         res.json({
             success: true,
@@ -32,37 +35,39 @@ const loginUser = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                phone: user.phone || '', // Include phone
+                phone: user.phone || '',
                 avatarUrl: user.avatarUrl || ''
             }
         })
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: "Hiba" })
+        res.json({ success: false, message: "Hiba történt" })
     }
 }
 
+// uj felhasznalo regisztracioja
 const registerUser = async (req, res) => {
     const { name, email, password } = req.body;
     try {
-
+        // ellenorzes, hogy letezik-e mar a felhasznalo
         const exists = await userModel.findOne({ email })
         if (exists) {
             return res.json({ success: false, message: "A felhasználó már létezik" })
         }
 
-
+        // email es jelszo validacio
         if (!validator.isEmail(email)) {
-            return res.json({ success: false, message: "Kérjük, írjon be egy érvényes e -mailt" })
+            return res.json({ success: false, message: "Kérlek adj meg egy érvényes email címet" })
         }
         if (password.length < 8) {
-            return res.json({ success: false, message: "Kérjük, írjon be egy erős jelszót" })
+            return res.json({ success: false, message: "Kérlek válassz erősebb jelszót" })
         }
 
-        // hashing user password
+        // jelszo titkositasa
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt)
 
+        // felhasznalo letrehozasa es mentese
         const newUser = new userModel({ name, email, password: hashedPassword })
         const user = await newUser.save()
         const token = createToken(user._id)
@@ -73,18 +78,18 @@ const registerUser = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                phone: user.phone || '', // Include phone
+                phone: user.phone || '',
                 avatarUrl: user.avatarUrl || ''
             }
         })
 
     } catch (error) {
         console.log(error);
-        res.json({ success: false, message: "Error" })
+        res.json({ success: false, message: "Hiba történt" })
     }
 }
 
-// Get current user profile
+// profil lekerese
 const getProfile = async (req, res) => {
     try {
         const userId = req.body.userId;
@@ -108,7 +113,7 @@ const getProfile = async (req, res) => {
     }
 };
 
-// Update profile (name, avatar, password)
+// profil frissitese (nev, avatar, jelszo)
 const updateProfile = async (req, res) => {
     const userId = req.body.userId;
     const { name, avatarUrl, currentPassword, newPassword } = req.body;
@@ -119,6 +124,7 @@ const updateProfile = async (req, res) => {
             return res.json({ success: false, message: 'Felhasználó nem található' });
         }
 
+        // adatok frissitese, ha meg lettek adva
         if (name) {
             user.name = name;
         }
@@ -127,6 +133,7 @@ const updateProfile = async (req, res) => {
             user.avatarUrl = avatarUrl;
         }
 
+        // jelszo csere logika
         if (newPassword) {
             if (!currentPassword) {
                 return res.json({ success: false, message: 'Add meg a jelenlegi jelszót.' });
@@ -155,7 +162,7 @@ const updateProfile = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                phone: user.phone || '', // Include phone
+                phone: user.phone || '',
                 avatarUrl: user.avatarUrl || ''
             }
         });
@@ -165,7 +172,7 @@ const updateProfile = async (req, res) => {
     }
 };
 
-// List all users
+// osszes felhasznalo listazasa
 const listUsers = async (req, res) => {
     try {
         const users = await userModel.find({}).select('-password');

@@ -4,19 +4,23 @@ import { StoreContext } from '../../Context/StoreContext';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
+// Profil beállítások oldal komponens
 const Settings = () => {
   const { profileName, setProfileName, profileAvatar, setProfileAvatar, url, token, loadProfile } = useContext(StoreContext);
 
+  // Helyi állapotok az űrlap mezőinek
   const [name, setName] = useState('');
   const [avatarPreview, setAvatarPreview] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
+  // Adatok inicializálása a kontextusból induláskor
   useEffect(() => {
     setName(profileName || '');
     setAvatarPreview(profileAvatar || '');
   }, [profileName, profileAvatar]);
 
+  // Profilkép változás kezelése (kép konvertálása DataURL formátumba)
   const handleAvatarChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -31,6 +35,7 @@ const Settings = () => {
     reader.readAsDataURL(file);
   };
 
+  // Profil adatok mentése a szerverre
   const handleSave = async (e) => {
     e.preventDefault();
 
@@ -58,6 +63,7 @@ const Settings = () => {
         return;
       }
 
+      // Helyi állapotok és localStorage frissítése sikeres mentés után
       const updatedUser = response.data.user;
       if (updatedUser) {
         setProfileName(updatedUser.name || '');
@@ -66,7 +72,7 @@ const Settings = () => {
         localStorage.setItem('profileAvatar', updatedUser.avatarUrl || '');
       }
 
-      // Ha jelszó változott, a backend már elintézte (bcrypt + mentés)
+      // Visszajelzés a felhasználónak
       if (newPassword) {
         toast.success('Profil és jelszó frissítve.');
       } else {
@@ -76,7 +82,7 @@ const Settings = () => {
       setCurrentPassword('');
       setNewPassword('');
 
-      // Biztonság kedvéért újratöltjük a profilt a backendről is
+      // Profil adatok újratöltése a kontextusban
       await loadProfile(token);
     } catch (err) {
       console.error(err);

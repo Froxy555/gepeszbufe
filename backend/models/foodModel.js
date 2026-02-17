@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+// étel séma létrehozása
 const foodSchema = new mongoose.Schema({
     name: { type: String, required: true },
     description: { type: String, required: true },
@@ -7,8 +8,9 @@ const foodSchema = new mongoose.Schema({
     image: { type: String, required: true },
     category: { type: String, required: true },
     available: { type: Boolean, default: true },
-    rating: { type: Number, default: 5, min: 0, max: 5 } // Added rating
+    rating: { type: Number, default: 5, min: 0, max: 5 }
 })
 
+// étel modell létrehozása
 const foodModel = mongoose.models.food || mongoose.model("food", foodSchema);
 export default foodModel;

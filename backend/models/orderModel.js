@@ -1,20 +1,22 @@
 import mongoose from "mongoose";
 
+// véletlen, egyszeri kód generálása a rendeléshez
 function generateRandomCode() {
-  return Math.floor(1000 + Math.random() * 9000).toString();
+    return Math.floor(1000 + Math.random() * 9000).toString();
 }
 
+// rendelés séma létrehozása
 const orderSchema = new mongoose.Schema({
     userId: {
         type: String,
         required: true
     },
-    items: { 
-        type: Array, 
+    items: {
+        type: Array,
         required: true
     },
-    amount: { 
-        type: Number, 
+    amount: {
+        type: Number,
         required: true
     },
     address: {
@@ -50,9 +52,10 @@ const orderSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
-orderSchema.virtual('formattedDate').get(function() {
+// dátum formázása magyar formátumban
+orderSchema.virtual('formattedDate').get(function () {
     if (!this.date) return '';
-    
+
     try {
         return this.date.toLocaleString('hu-HU', {
             year: 'numeric',
@@ -68,7 +71,8 @@ orderSchema.virtual('formattedDate').get(function() {
     }
 });
 
-orderSchema.pre('save', async function(next) {
+// egyedi rendelési kód biztosítása mentés előtt
+orderSchema.pre('save', async function (next) {
     if (this.isNew || this.isModified('randomCode')) {
         let isUnique = false;
         let attempts = 0;
@@ -93,6 +97,7 @@ orderSchema.pre('save', async function(next) {
 
 orderSchema.index({ randomCode: 1 }, { unique: true });
 
+// rendelés modell létrehozása
 const orderModel = mongoose.models.order || mongoose.model("order", orderSchema);
 
 export default orderModel;

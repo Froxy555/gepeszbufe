@@ -3,15 +3,18 @@
     flex-direction: column;
     gap: 20px;
 }
+
 .explore-menu h1 {
     color: #262626;
     font-weight: 600;
 }
+
 .explore-menu-text {
     max-width: 60%;
     color: #808080;
     line-height: 1.5;
 }
+
 .explore-menu-list {
     display: flex;
     justify-content: flex-start;
@@ -22,11 +25,13 @@
     overflow-x: auto;
     padding: 10px 0;
     scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+    -webkit-overflow-scrolling: touch;
 }
+
 .explore-menu-list::-webkit-scrollbar {
     display: none;
 }
+
 .explore-menu-list-item {
     display: flex;
     flex-direction: column;
@@ -34,23 +39,27 @@
     flex-shrink: 0;
     cursor: pointer;
 }
+
 .explore-menu-list-item img {
     width: 7.5vw;
     min-width: 80px;
     border-radius: 50%;
     transition: all 0.3s ease;
     border: 3px solid transparent;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.05);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
 }
+
 .explore-menu-list-item:hover img {
-    box-shadow: 0px 6px 20px rgba(0,0,0,0.1);
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
 }
+
 .explore-menu-list-item .active {
     border: 3px solid #FF4C24;
     padding: 2px;
     transform: scale(1.05);
 }
+
 .explore-menu-list-item p {
     margin-top: 10px;
     color: #747474;
@@ -58,9 +67,11 @@
     font-weight: 500;
     transition: 0.3s;
 }
+
 .explore-menu-list-item:hover p {
     color: #FF4C24;
 }
+
 .explore-menu hr {
     margin: 10px 0px;
     height: 1px;
@@ -79,10 +90,12 @@
     .explore-menu-list {
         gap: 20px;
     }
+
     .explore-menu-list-item img {
         min-width: 65px;
         width: 16vw;
     }
+
     .explore-menu-list-item p {
         font-size: 13px;
     }

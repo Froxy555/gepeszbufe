@@ -5,9 +5,11 @@ import FoodDisplay from '../../components/FoodDisplay/FoodDisplay';
 import { useLocation } from 'react-router-dom';
 
 const Home = () => {
+  // Étel kategória állapot
   const [category, setCategory] = useState('All');
   const location = useLocation();
 
+  // Görgetés a menü szekcióhoz URL paraméter alapján
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     if (params.get('section') === 'menu') {

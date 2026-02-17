@@ -5,22 +5,26 @@ import { StoreContext } from '../../Context/StoreContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 
+// Bejelentkező/Regisztráló felugró ablak komponens
 const LoginPopup = ({ setShowLogin }) => {
     const { setToken, url, loadCartData, setProfileName, setProfileAvatar } = useContext(StoreContext)
     const [currState, setCurrState] = useState("Regisztráció");
 
+    // Űrlap adatok állapota
     const [data, setData] = useState({
         name: "",
         email: "",
         password: ""
     })
 
+    // Input mezők változásának kezelése
     const onChangeHandler = (event) => {
         const name = event.target.name
         const value = event.target.value
         setData(data => ({ ...data, [name]: value }))
     }
 
+    // Bejelentkezés vagy Regisztráció kezelése
     const onLogin = async (e) => {
         e.preventDefault()
 
@@ -38,6 +42,7 @@ const LoginPopup = ({ setShowLogin }) => {
             localStorage.setItem("token", token);
             loadCartData({ token });
 
+            // Felhasználói profil adatok mentése
             if (user) {
                 setProfileName(user.name || '');
                 setProfileAvatar(user.avatarUrl || '');
@@ -65,9 +70,10 @@ const LoginPopup = ({ setShowLogin }) => {
                 </div>
                 <button type="submit" className="login-submit-button">{currState === "Bejelentkezés" ? "Bejelentkezés" : "Fiók létrehozása"}</button>
                 <div className="login-popup-condition">
-                    <input type="checkbox" name="" id="" required/>
+                    <input type="checkbox" name="" id="" required />
                     <p>Folytatva egyetértek a használati feltételekkel és az adatvédelmi irányelvekkel.</p>
                 </div>
+                {/* Váltás bejelentkezés és regisztráció között */}
                 {currState === "Bejelentkezés"
                     ? <p>Nincs még fiókod? <span onClick={() => setCurrState('Regisztráció')}>Fiók létrehozása</span></p>
                     : <p>Van már fiókod? <span onClick={() => setCurrState('Bejelentkezés')}>Bejelentkezés</span></p>

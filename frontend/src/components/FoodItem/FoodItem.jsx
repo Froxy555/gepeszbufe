@@ -3,6 +3,7 @@ import './FoodItem.css'
 import { assets } from '../../assets/assets'
 import { StoreContext } from '../../Context/StoreContext';
 
+// Étel kártya komponens
 const FoodItem = ({ image, name, price, desc, id, available = true, rating = 5 }) => {
     const context = useContext(StoreContext) || {};
     const {
@@ -13,19 +14,23 @@ const FoodItem = ({ image, name, price, desc, id, available = true, rating = 5 }
         currency = ''
     } = context;
 
+    // Kosárba tétel kezelése
     const handleAddToCart = () => {
         addToCart(id);
     };
 
+    // Kosárból eltávolítás kezelése
     const handleRemoveFromCart = () => {
         removeFromCart(id);
     };
 
+    // Aktuális darabszám lekérése a kosárból
     const getCartCount = () => {
         if (!cartItems) return 0;
         return cartItems[id] || 0;
     };
 
+    // Csillagok renderelése az értékeléshez
     const renderStars = () => {
         const stars = [];
         for (let i = 0; i < 5; i++) {
@@ -40,14 +45,17 @@ const FoodItem = ({ image, name, price, desc, id, available = true, rating = 5 }
 
     return (
         <div className='food-item'>
+            {/* Étel kép konténer */}
             <div className='food-item-img-container'>
                 <img className={`food-item-image ${!available ? 'grayscale' : ''}`} src={url + "/images/" + image} alt="" />
 
                 {!available ? (
+                    // Elfogyott jelzés
                     <div className="sold-out-overlay">
                         <p>Elfogyott</p>
                     </div>
                 ) : (
+                    // Kosár gombok (Hozzáadás vagy Számláló)
                     !getCartCount()
                         ? <img
                             className='add'
@@ -62,6 +70,8 @@ const FoodItem = ({ image, name, price, desc, id, available = true, rating = 5 }
                         </div>
                 )}
             </div>
+
+            {/* Étel információk */}
             <div className="food-item-info">
                 <div className="food-item-name-rating">
                     <p>{name}</p>

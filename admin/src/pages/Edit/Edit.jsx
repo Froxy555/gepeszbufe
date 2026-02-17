@@ -31,7 +31,7 @@ const Edit = ({ url }) => {
                 available: product.available !== undefined ? product.available : true,
                 rating: product.rating !== undefined ? product.rating : 5
             });
-            // We can't set image file object from URL easily, so we handle preview differently
+
         } else {
             toast.error("Nincs kiválasztott termék");
             navigate('/list');
